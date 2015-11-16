@@ -1,0 +1,73 @@
+<div class="jumbotron text-center" ng-show="wish.processing">
+	<span class="glyphicon glyphicon-repeat spinner"></span>
+	<p>Loading Wishes...</p>
+</div>
+
+<div class="modal in" id="wishModal" role="dialog" tabindex="-1" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3>Wish Content</h3>
+            </div>
+            <div class="modal-body">
+                <div id="wishModalDate" style="display:block;float:right;margin:12px;">
+                </div>
+                <br>
+                <div id="wishModalContent" style="display:block;font-size:24px; margin:10px;">
+                </div>
+                <br>
+                <div id="wishModalId" style="display:none;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+        <div style="margin:10px auto;">
+            <form class="form-horizontal" ng-submit="wish.findWish()">
+                <input type="text" ng-model="wish.findData.content" placeholder="Search a wish..." name="search"
+                       id="search" class="wish_input">
+                <!--<br/>-->
+                <button class="btn btn-success" type="submit" style="margin-bottom: 4px;">Search a wish</button>
+            </form>
+        </div>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+        <div style="margin:10px auto;">
+            <form class="form-horizontal" ng-submit="wish.saveWish()">
+                <input type="text" ng-model="wish.wishData.content" placeholder="Submit a wish..." name="addWish"
+                          id="addWish" class="wish_input">
+                <!--<br/>-->
+                <button class="btn btn-info" type="submit" style="margin-bottom: 4px;">Submit a wish</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--<div class="alert alert-info">-->
+    <!--{{ wish.message }}-->
+<!--</div>-->
+<div class="row example-animate-container" ng-show="wish.wishes">
+    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 animate-repeat" ng-repeat="w in wish.wishes">
+        <div class="wish_content" ng-click='wish.openWishModal(w)'>
+            <div style="overflow:hidden;height:90%;font-size:16px;line-height: 17px;cursor:pointer;">
+                {{ w.content }}
+            </div>
+            <div style="position:absolute;bottom:0;right:20px">
+                {{ w.createdDate }}
+            </div>
+        </div>
+    </div>
+</div>
+<div style="display:block;text-align: center;margin:10px 0">
+    <form class="form-horizontal" ng-submit="wish.loadMoreWish()">
+        <input type="hidden" ng-model="wish.loadMoreData.limit" name="loadLimit" id="loadLimit" value="12">
+        <button class="btn btn-danger" type="submit" ng-hide="wish.loadMore">Load More...</button>
+    </form>
+</div>

@@ -1,0 +1,115 @@
+main 					{
+	padding-top:30px;	
+}
+
+/* HEADER 
+===================== */
+header .navbar 		{ 
+	border-radius:0;
+}
+
+/* NGANIMATE
+====================== */
+
+/* show and hide */
+.show-hide-message.ng-hide-remove {
+	-webkit-animation:zoomIn 0.3s both ease;
+	-moz-animation:zoomIn 0.3s both ease;
+	animation:zoomIn 0.3s both ease;
+}
+
+/* ANIMATIONS
+====================== */
+.spinner {
+    animation:spin 1s infinite;
+    -webkit-animation:spin 1s infinite;
+    -moz-animation:spin 1s infinite;
+}
+
+@keyframes spin {
+    from 	{ transform:rotate(0deg); }
+    to 	{ transform:rotate(360deg); }
+}
+
+@-webkit-keyframes spin {
+    from 	{ -webkit-transform:rotate(0deg); }
+    to 	{ -webkit-transform:rotate(360deg); }
+}
+
+@-moz-keyframes spin {
+    from 	{ -moz-transform:rotate(0deg); }
+    to 	{ -moz-transform:rotate(360deg); }
+}
+
+body {
+    background: url('../images/bg4.jpg') repeat-y top center;
+    background-size: 100%;
+}
+
+.wish_content {
+    margin:30px auto;
+    padding:28px 20px;
+    background:url('../images/np_bg5.jpg') no-repeat top center;
+    background-size:100%, 100%;
+    width: 240px;
+    height: 170px;
+    position:relative;
+}
+
+.wish_input {
+    border:1px solid;
+    margin-bottom:5px;
+    margin-left: 0;
+    width: 65%;
+    padding:1px 6px !important;
+    height: 34px;
+    border-radius:2px !important;
+}
+
+@media (min-width: 1100px) {
+    .wish_input {
+        margin-left: 12px;
+    }
+}
+
+.navbar-inverse {
+    background: black;
+}
+
+footer {
+    height: 80px;
+    background: black;
+    display: block;
+    color: white;
+    padding-top: 10px;
+}
+
+.example-animate-container {
+    /*margin:0;*/
+    /*padding:0 10px;*/
+}
+
+.animate-repeat {
+    /*line-height:240px;*/
+    /*box-sizing:border-box;*/
+}
+
+.animate-repeat.ng-move,
+.animate-repeat.ng-enter,
+.animate-repeat.ng-leave {
+    transition: linear 0.2s;
+}
+
+.animate-repeat.ng-leave.ng-leave-active,
+.animate-repeat.ng-move,
+.animate-repeat.ng-enter {
+    opacity:0;
+    max-height:0;
+}
+
+.animate-repeat.ng-leave,
+.animate-repeat.ng-move.ng-move-active,
+.animate-repeat.ng-enter.ng-enter-active {
+    opacity:1;
+    max-height:240px;
+}
