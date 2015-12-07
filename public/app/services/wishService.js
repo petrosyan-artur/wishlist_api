@@ -10,10 +10,15 @@ angular.module('wishService', [])
 		return $http.get('/api/wishes/' + id);
 	};
 
-	// get all wishess
+	// get all wishes
 	wishFactory.all = function() {
 		return $http.get('/api/wishes/');
 	};
+
+    // get all wishes count
+    wishFactory.count = function() {
+        return $http.post('/api/wishes/allCount');
+    };
 
 	// create a wish
 	wishFactory.create = function(wishData) {
@@ -23,6 +28,10 @@ angular.module('wishService', [])
 
     wishFactory.find = function (findData) {
         return $http.post('/api/wishes/find/', findData);
+    };
+
+    wishFactory.findByUserId = function (userId) {
+        return $http.get('/api/private/admin/wishes/find/'+ userId);
     };
 
     wishFactory.loadMore = function (loadMoreData) {

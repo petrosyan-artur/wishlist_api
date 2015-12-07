@@ -19,6 +19,7 @@ angular.module('userService', [])
 	userFactory.create = function(userData) {
 		return $http.post('/api/users/', userData);
 	};
+
     // get a single user
     userFactory.getByUsername = function(uname) {
         return $http.get('/api/private/user/' + uname);

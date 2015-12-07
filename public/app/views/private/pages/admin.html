@@ -1,0 +1,77 @@
+<div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+        <div style="margin:10px auto;">
+            <form class="form-horizontal" ng-submit="private.findWish()">
+                <input type="text" ng-model="private.findData.content" placeholder="Search a wish..." name="searchWish"
+                       id="searchWish" class="wish_input">
+                <!--<br/>-->
+                <button class="btn btn-success" type="submit" style="margin-bottom: 4px;">Search a wish</button>
+            </form>
+        </div>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+        <div style="margin:10px auto;">
+            <form class="form-horizontal" ng-submit="private.findUser()">
+                <input type="text" ng-model="private.user.username" placeholder="Search a user..." name="searchUser"
+                       id="searchUser" class="wish_input">
+                <!--<br/>-->
+                <button class="btn btn-info" type="submit" style="margin-bottom: 4px;">Search a user</button>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="row" ng-if="private.userData">
+    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+        <table class="table table-bordered table-striped" ng-show="private.wishes">
+            <thead>
+            <tr>
+                <th>_id</th>
+                <th>Username</th>
+                <th>Password</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>{{ private.userData._id }}</td>
+                <td>{{ private.userData.username }}</td>
+                <td></td>
+                <!--<td class="col-sm-2">-->
+                    <!--<a href="#" ng-click="private.updateWish(w._id)" class="btn btn-primary">Update</a>-->
+                    <!--<a href="#" ng-click="private.deleteWish(w._id)" class="btn btn-danger">Delete</a>-->
+                <!--</td>-->
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="row">
+    <table class="table table-bordered table-striped" ng-show="private.wishes">
+        <thead>
+        <tr>
+            <th>_id</th>
+            <th>Date Created</th>
+            <th>Content</th>
+            <th>Is Active</th>
+            <th class="col-sm-2"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="w in private.wishes">
+            <td>{{ w._id }}</td>
+            <td>{{ w.createdDate }}</td>
+            <td><input type="text" value="{{ w.content }}" id="{{ w._id }}_content" style="width: 300px;padding:2px 6px; border:1px solid black;"></td>
+            <td>{{ w.isActive }}</td>
+            <td class="col-sm-2">
+                <a href="#" ng-click="private.updateWish(w._id)" class="btn btn-primary">Update</a>
+                <a href="#" ng-click="private.deleteWish(w._id)" class="btn btn-danger">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div style="display:block;text-align: center;margin:10px 0">
+        <form class="form-horizontal" ng-submit="private.loadMoreWish()">
+            <input type="hidden" ng-model="private.loadMoreData.limit" name="loadLimit" id="loadLimit" value="12">
+            <button class="btn btn-danger" id="loadMore" type="submit" ng-hide="private.loadMore">Load More...</button>
+        </form>
+    </div>
+</div>

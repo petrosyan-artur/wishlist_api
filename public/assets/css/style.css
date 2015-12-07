@@ -113,3 +113,18 @@ footer {
     opacity:1;
     max-height:240px;
 }
+
+.animate-if.ng-enter, .animate-if.ng-leave {
+    -webkit-transition: 3s linear all;
+    -moz-transition: 3s linear all;
+    -ms-transition: 3s linear all;
+    -o-transition: 3s linear all;
+    transition: 3s linear all;
+}
+
+#likeDiv {
+    display: block;
+    margin: 0 auto;
+    width: 100%;
+    text-align: center;
+}

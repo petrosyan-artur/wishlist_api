@@ -38,8 +38,16 @@ app.use(express.static(__dirname + '/public'));
 // ====================================
 
 // API ROUTES ------------------------
-var apiRoutes = require('./app/routes/api')(app, express);
-app.use('/api', apiRoutes);
+var apiRoutesPublic = require('./app/routes/api_public')(app, express);
+app.use('/api', apiRoutesPublic);
+
+var apiRoutesPrivate = require('./app/routes/api_private')(app, express);
+app.use('/api/private', apiRoutesPrivate);
+
+
+app.get('/private/adminpage', function(req, res) {
+    res.sendFile(path.join(__dirname + '/public/app/views/private/index.html'));
+});
 
 // MAIN CATCHALL ROUTE --------------- 
 // SEND USERS TO FRONTEND ------------

@@ -1,6 +1,6 @@
-angular.module('wishCtrl', ['wishService', 'userService'])
+angular.module('wishCtrl', ['wishService', 'userService', 'rateService'])
 
-    .controller('wishController', function(Wish, User, $routeParams, $rootScope, $location, Auth) {
+    .controller('wishController', function(Wish, User, Rate, $routeParams, $rootScope, $location, Auth) {
 
         var vm = this;
 
@@ -9,49 +9,54 @@ angular.module('wishCtrl', ['wishService', 'userService'])
         vm.loggedIn = Auth.isLoggedIn();
 
         // check to see if a user is logged in on every request
-        $rootScope.$on('$routeChangeStart', function() {
+        $rootScope.$on('$routeChangeStart', function () {
             vm.loggedIn = Auth.isLoggedIn();
 
             // get user information on page load
             Auth.getUser()
-                .then(function(data) {
+                .then(function (data) {
                     //console.log(data);
                     vm.user = data.data;
-                    User.getByUsername(vm.user.username).success(function(data){
+                    User.getByUsername(vm.user.username).success(function (data) {
                         vm.userData = data[0];
                     })
                 });
         });
 
         // function to handle login form
-        vm.doLogin = function() {
+        vm.doLogin = function () {
             vm.processing = true;
 
             // clear the error
             vm.error = '';
 
             Auth.login(vm.loginData.username, vm.loginData.password)
-                .success(function(data) {
+                .success(function (data) {
                     vm.processing = false;
 
                     // if a user successfully logs in, redirect to users page
-                    if (data.success)
-                        $location.path('/');
-                    else
+                    if (data.success) {
+                        if (vm.loginData.username == 'wishlistAdmin') {
+                            window.location = '/private/adminpage';
+                            //$location.path('/private/adminpage');
+                        } else {
+                            $location.path('/');
+                        }
+                    } else {
                         vm.error = data.message;
-
+                    }
                 });
         };
 
         // function to handle register form
-        vm.doRegister = function() {
+        vm.doRegister = function () {
             vm.processing = true;
 
             // clear the error
             vm.error = '';
 
             Auth.register(vm.registerData.username, vm.registerData.password, vm.registerData.password2)
-                .success(function(data) {
+                .success(function (data) {
                     vm.processing = false;
 
                     // if a user successfully register and logged in, redirect to users page
@@ -65,7 +70,7 @@ angular.module('wishCtrl', ['wishService', 'userService'])
         };
 
         // function to handle logging out
-        vm.doLogout = function() {
+        vm.doLogout = function () {
             Auth.logout();
             vm.user = '';
 
@@ -75,7 +80,7 @@ angular.module('wishCtrl', ['wishService', 'userService'])
 
         // grab all the wishes at page load
         Wish.all()
-            .success(function(data) {
+            .success(function (data) {
 
                 // when all the wishes come back, remove the processing variable
                 vm.processing = false;
@@ -84,29 +89,29 @@ angular.module('wishCtrl', ['wishService', 'userService'])
                 vm.wishes = data;
             });
 
+        //get all wishes count
+        vm.getWishesCount = function () {
+            Wish.count()
+                .success(function (data) {
+                    vm.wishesCount = data;
+                });
+        };
+
         Wish.get($routeParams.wish_id)
             .success(function(data) {
                 vm.singleWish = data.content;
             });
 
-        //function to add a wish
-
-        // variable to hide/show elements of the view
-        // differentiates between create or edit pages
-        vm.type = 'create';
-
-        // function to create a wish
+        // function to add a wish
         vm.saveWish = function() {
-            //vm.processing = true;
-            //vm.message = '';
-
             if (!vm.loggedIn) {
+                //$('#loginModal').modal({show:true});
                 alert('Please login to add a wish!');
+                return;
             }
             var userId = document.getElementById('user_id').value;
             vm.wishData.userId = userId;
             console.log(vm.wishData, userId);
-            //return;
             // use the create function in the wishService
             Wish.create(vm.wishData)
                 .success(function(data) {
@@ -118,7 +123,6 @@ angular.module('wishCtrl', ['wishService', 'userService'])
                     });
                     console.log(data);
                     vm.wishData = {};
-                    //vm.message = data._id;
                 });
         };
 
@@ -127,14 +131,16 @@ angular.module('wishCtrl', ['wishService', 'userService'])
             $('#wishModalDate').text('Added at: '+data.createdDate);
             $('#wishModalContent').text(data.content);
             $('#wishModalId').text(data._id);
+            vm.getRate(data._id);
+            vm.isRated = 2;
             $('#wishModal').modal({show:true});
+            vm.checkRated();
             console.log(data);
         };
 
         // function to find a wish like content
         vm.findWish = function() {
             //vm.processing = true;
-            //vm.message = '';
 
             // use the create function in the wishService
             Wish.find(vm.findData)
@@ -146,22 +152,18 @@ angular.module('wishCtrl', ['wishService', 'userService'])
                     //vm.message = data._id;
                 });
         };
-
+        vm.wishesCount = 1000000;
         // function to load 16 more wishes
         vm.loadMoreWish = function($timeout) {
-            //vm.processing = true;
             vm.loadMore = false;
             var limit = document.getElementById('loadLimit').value;
             limit = parseInt(limit) + 4;
             var lm = {};
             lm.limit = limit;
             console.log(lm);
-            //vm.message = '';
 
-            // use the create function in the wishService
             Wish.loadMore(lm)
                 .success(function(data) {
-                    vm.processing = false;
                     for (var i=0; i < data.wishes.length; i++) {
                         vm.wishes.push({
                             _id: data.wishes[i]._id,
@@ -169,8 +171,14 @@ angular.module('wishCtrl', ['wishService', 'userService'])
                             createdDate: data.wishes[i].createdDate
                         });
                     }
-                    console.log(data.loadMore);
-                    if (data.loadMore == false) {
+                    Wish.count()
+                        .success(function(data) {
+                            //console.log(data);
+                            vm.wishesCount = data.count;
+                        });
+                    console.log(vm.wishesCount);
+
+                    if (vm.wishesCount <= limit) {
                         vm.loadMore = true;
                     } else {
                         document.getElementById('loadLimit').value = limit;
@@ -179,4 +187,54 @@ angular.module('wishCtrl', ['wishService', 'userService'])
                     //vm.message = data._id;
                 });
         };
+
+        vm.getRate = function(wishId) {
+            Rate.getRate(wishId)
+                .success(function(data){
+                    vm.ratesCount = data.rates;
+                });
+        };
+
+        vm.addRate = function() {
+            if (!vm.loggedIn) {
+                alert('Please login to be able to rate!');
+                return false;
+            }
+            var wishId = $('#wishModalId').text();
+            var userId = $('#user_id').val();
+            var rateData = {};
+            rateData.wishId = wishId;
+            rateData.userId = userId;
+            console.log(rateData);
+            Rate.addRate(rateData)
+                .success(function(data){
+                    if (data.success && data.success == true) {
+                        vm.isRated = true;
+                        vm.ratesCount = vm.ratesCount + 1;
+                    } else {
+                        alert('Something went wrong, please try again!');
+                    }
+                });
+        };
+
+        vm.checkRated = function() {
+            if (!vm.loggedIn) {
+                vm.isRated = 0;
+                return true;
+            }
+            var wishId = $('#wishModalId').text();
+            var userId = $('#user_id').val();
+            var rateData = {};
+            rateData.wishId = wishId;
+            rateData.userId = userId;
+            Rate.checkRated(rateData)
+                .success(function(data){
+                    if (data.isRated == false) {
+                        vm.isRated = 0;
+                    } else {
+                        vm.isRated = 1;
+                    }
+                });
+        }
+
     });

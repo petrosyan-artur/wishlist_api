@@ -1,6 +1,6 @@
 angular.module('app.routes', ['ngRoute'])
 
-    .config(function($routeProvider, $locationProvider) {
+    .config(function ($routeProvider, $locationProvider) {
 
         $routeProvider
 
@@ -13,15 +13,15 @@ angular.module('app.routes', ['ngRoute'])
 
             // login page
             .when('/login', {
-                templateUrl : 'app/views/pages/login.html',
-                controller  : 'wishController',
+                templateUrl: 'app/views/pages/login.html',
+                controller: 'wishController',
                 controllerAs: 'login'
             })
 
             // registration page
             .when('/register', {
-                templateUrl : 'app/views/pages/register.html',
-                controller  : 'wishController',
+                templateUrl: 'app/views/pages/register.html',
+                controller: 'wishController',
                 controllerAs: 'register'
             })
 
@@ -29,14 +29,28 @@ angular.module('app.routes', ['ngRoute'])
                 templateUrl: 'app/views/pages/single.html',
                 controller: 'wishController',
                 controllerAs: 'wish'
-            });
+            })
 
-            // single wish page
-            //.when('/wish/:wish_id', {
-            //    templateUrl: 'app/views/pages/users/single.html',
-            //    controller: 'userEditController',
-            //    controllerAs: 'user'
-            //});
+            //admin page
+            .when('/private/adminpage', {
+                templateUrl: 'app/views/private/pages/admin.html',
+                controller: 'privateController',
+                controllerAs: 'private'
+            })
+
+            // page to edit a wish
+            .when('/private/adminpage/wishes/:wish_id', {
+                templateUrl: 'app/views/pages/single.html',
+                controller: 'privateWishEditController',
+                controllerAs: 'user'
+        });
+
+        // single wish page
+        //.when('/wish/:wish_id', {
+        //    templateUrl: 'app/views/pages/users/single.html',
+        //    controller: 'userEditController',
+        //    controllerAs: 'user'
+        //});
 
         $locationProvider.html5Mode(true);
 
