@@ -20,6 +20,21 @@ angular.module('privateService', [])
             return $http.delete('/api/private/admin/wish/' + id);
         };
 
+        // change user password
+        privateFactory.changePassword = function(data) {
+            return $http.post('/api/private/changePassword', data);
+        };
+
+        // deactivate user
+        privateFactory.deactivateUser = function(data) {
+            return $http.post('/api/private/user/deactivate', data);
+        };
+
+        // activate user
+        privateFactory.activateUser = function(data) {
+            return $http.post('/api/private/user/activate', data);
+        };
+
 	return privateFactory;
 
 });

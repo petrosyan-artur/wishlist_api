@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+    <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
         <div style="margin:10px auto;">
             <form class="form-horizontal" ng-submit="private.findWish()">
                 <input type="text" ng-model="private.findData.content" placeholder="Search a wish..." name="searchWish"
@@ -9,7 +9,7 @@
             </form>
         </div>
     </div>
-    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+    <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
         <div style="margin:10px auto;">
             <form class="form-horizontal" ng-submit="private.findUser()">
                 <input type="text" ng-model="private.user.username" placeholder="Search a user..." name="searchUser"
@@ -19,30 +19,41 @@
             </form>
         </div>
     </div>
+    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+        <div style="margin:10px auto;">
+            <button class="btn btn-info" ng-if="private.userData" style="margin-bottom: 4px;">Hide All Users</button>
+            <button class="btn btn-info" ng-if= "!private.userData" ng-click="private.getAllUsers()" style="margin-bottom: 4px;">Get All Users</button>
+        </div>
+    </div>
 </div>
 <div class="row" ng-if="private.userData">
-    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-        <table class="table table-bordered table-striped" ng-show="private.wishes">
-            <thead>
-            <tr>
-                <th>_id</th>
-                <th>Username</th>
-                <th>Password</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>{{ private.userData._id }}</td>
-                <td>{{ private.userData.username }}</td>
-                <td></td>
-                <!--<td class="col-sm-2">-->
-                    <!--<a href="#" ng-click="private.updateWish(w._id)" class="btn btn-primary">Update</a>-->
-                    <!--<a href="#" ng-click="private.deleteWish(w._id)" class="btn btn-danger">Delete</a>-->
-                <!--</td>-->
-            </tr>
-            </tbody>
-        </table>
-    </div>
+    <table class="table table-bordered table-striped" ng-show="private.wishes">
+        <thead>
+        <tr>
+            <th>_id</th>
+            <th>Username</th>
+            <th>Password</th>
+            <th>Retype Password</th>
+            <th class="col-sm-3"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="(key, p) in private.userData">
+            <td>{{ p._id }}</td>
+            <td>{{ p.username }}</td>
+            <td><input type="password" name="password" class="form-control" id="password_{{p._id}}">
+            </td>
+            <td><input type="password" name="password2" class="form-control" id="password2_{{p._id}}">
+            </td>
+            <td class="col-sm-3">
+                <a href="#" ng-click="private.changePassword(p._id)"
+                   class="btn btn-primary">Update</a>
+                <a href="#" ng-show="p.isActive" id="deactivate_{{p._id}}" ng-click="private.deactivateUser(p._id, key)" class="btn btn-danger">Deactivate</a>
+                <a href="#" ng-show="!p.isActive" id="activate_{{p._id}}" ng-click="private.activateUser(p._id, key)" class="btn btn-success">Activate</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 <div class="row">
     <table class="table table-bordered table-striped" ng-show="private.wishes">
@@ -51,7 +62,7 @@
             <th>_id</th>
             <th>Date Created</th>
             <th>Content</th>
-            <th>Is Active</th>
+            <th>Author</th>
             <th class="col-sm-2"></th>
         </tr>
         </thead>
@@ -60,7 +71,7 @@
             <td>{{ w._id }}</td>
             <td>{{ w.createdDate }}</td>
             <td><input type="text" value="{{ w.content }}" id="{{ w._id }}_content" style="width: 300px;padding:2px 6px; border:1px solid black;"></td>
-            <td>{{ w.isActive }}</td>
+            <td>{{ w.userId }}</td>
             <td class="col-sm-2">
                 <a href="#" ng-click="private.updateWish(w._id)" class="btn btn-primary">Update</a>
                 <a href="#" ng-click="private.deleteWish(w._id)" class="btn btn-danger">Delete</a>

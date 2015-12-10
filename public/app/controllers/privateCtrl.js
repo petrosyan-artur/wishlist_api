@@ -52,16 +52,90 @@ angular.module('privateCtrl', ['privateService','userService', 'wishService'])
         };
         vm.userData = false;
         vm.findUser = function() {
+            if (!vm.user.username || vm.user.username == '') {
+                alert('Username is empty!');
+                return false;
+            }
             User.getByUsername(vm.user.username)
                 .success(function(data) {
-                    vm.userData = data[0];
-                    Wish.findByUserId(data[0]._id)
-                        .success(function(wishes) {
-                            vm.wishes = wishes;
-                            $('#loadMore').css('display', 'none');
-                        });
+                    if (data) {
+                        vm.userData = data;
+                        Wish.findByUserId(data[0]._id)
+                            .success(function(wishes) {
+                                vm.wishes = wishes;
+                                $('#loadMore').css('display', 'none');
+                            });
+                    } else {
+                        alert('User not found');
+                        return false;
+                    }
                 });
         };
+
+        vm.getAllUsers = function() {
+            User.all()
+                .success(function(data){
+                    vm.userData = data;
+                });
+        };
+
+        vm.changePassword = function(userId) {
+            var pw = $('#password_'+userId).val();
+            var pw2 = $('#password2_'+userId).val();
+            if (pw == '') {
+                alert('Password is empty!');
+                return false;
+            }
+            if (pw != pw2) {
+                alert('Passwords mismatch!');
+                return false;
+            }
+            var userData = {};
+            userData.userId = userId;
+            userData.password = pw;
+            userData.password2 = pw2;
+
+            Private.changePassword(userData)
+                .success(function(data){
+                   if (data.success == true) {
+                       $('#password_'+userId).val('');
+                       $('#password2_'+userId).val('');
+                       alert(data.message);
+                       return false;
+                   }
+                });
+
+            return false;
+        };
+
+        vm.deactivateUser = function(userId, key) {
+            var userData = {};
+            userData.userId = userId;
+
+            Private.deactivateUser(userData)
+                .success(function(data){
+                    if (data.success == true) {
+                        alert(data.message);
+                        vm.userData[key].isActive = false;
+                        return false;
+                    }
+                });
+        };
+
+        vm.activateUser = function(userId, key) {
+            var userData = {};
+            userData.userId = userId;
+
+            Private.activateUser(userData)
+                .success(function(data){
+                    if (data.success == true) {
+                        alert(data.message);
+                        vm.userData[key].isActive = true;
+                        return false;
+                    }
+                });
+        };
+
 
         vm.wishesCount = 1000000;
         vm.loadMoreWish = function() {

@@ -149,6 +149,7 @@ angular.module('wishCtrl', ['wishService', 'userService', 'rateService'])
                     vm.wishes = data;
                     console.log(data);
                     vm.wishData = {};
+                    $('#loadMore').css('display', 'none');
                     //vm.message = data._id;
                 });
         };

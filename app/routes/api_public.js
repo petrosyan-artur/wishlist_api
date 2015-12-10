@@ -18,7 +18,7 @@ module.exports = function(app, express) {
         // find the user
         User.findOne({
             username: req.body.username
-        }).select('username password').exec(function(err, user) {
+        }).select('username password isActive').exec(function(err, user) {
 
             if (err) throw err;
 
@@ -29,6 +29,14 @@ module.exports = function(app, express) {
                     message: 'Authentication failed. User not found.'
                 });
             } else if (user) {
+
+                if (!user.isActive) {
+                    res.json({
+                        success: false,
+                        message: 'User is disabled.'
+                    });
+                    return;
+                }
 
                 // check if password matches
                 var validPassword = user.comparePassword(req.body.password);
@@ -143,7 +151,13 @@ module.exports = function(app, express) {
 			Wish.find({isActive: true}).sort({_id:-1}).limit(limit).exec(function(err, wishes) {
 				if (err) res.send(err);
 
-				// return the users
+				// return the wishes
+                //for (var i = 1; wishes.length; ++i) {
+                 //   User.findById(wishes[i].userId, function(err, user) {
+                 //       res.json(user);
+                 //      wishes[i].username = user._id;
+                 //   });
+                //}
 				res.json(wishes);
 			});
 		});

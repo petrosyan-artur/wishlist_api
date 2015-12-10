@@ -144,6 +144,86 @@ module.exports = function(app, express) {
         });
     });
 
+    apiRouter.route('/changePassword')
+        // change user password
+        .post(function(req, res) {
+            if (!req.body.password || req.body.password == '') {
+                return res.json({ success: false, message: 'Passwords is empty! '});
+            }
+            if (req.body.password != req.body.password2) {
+                return res.json({ success: false, message: 'Passwords Mismatch! '});
+            }
+            User.findById(req.body.userId, function(err, user) {
+
+                if (err) res.send(err);
+
+                if (!user) {
+                    res.json({ success:false, message: 'Invalid User!' });
+                }
+                if (req.body.password) user.password = req.body.password;
+
+                user.save(function(err) {
+                    if (err) res.send(err);
+
+                    res.json({ success:true, message: 'Password is updated!' });
+                });
+
+            });
+
+        });
+
+    apiRouter.route('/user/deactivate')
+        // deactivate user
+        .post(function(req, res) {
+            if (!req.body.userId) {
+                return res.json({ success: false, message: 'Invalid userId!'});
+            }
+            User.findById(req.body.userId, function(err, user) {
+
+                if (err) res.send(err);
+
+                if (!user) {
+                    res.json({ success:false, message: 'Invalid User!' });
+                }
+
+                user.isActive = false;
+
+                user.save(function(err) {
+                    if (err) res.send(err);
+
+                    res.json({ success:true, message: 'User is deactivated successfully!' });
+                });
+
+            });
+
+        });
+
+    apiRouter.route('/user/activate')
+        // deactivate user
+        .post(function(req, res) {
+            if (!req.body.userId) {
+                return res.json({ success: false, message: 'Invalid userId!'});
+            }
+            User.findById(req.body.userId, function(err, user) {
+
+                if (err) res.send(err);
+
+                if (!user) {
+                    res.json({ success:false, message: 'Invalid User!' });
+                }
+
+                user.isActive = true;
+
+                user.save(function(err) {
+                    if (err) res.send(err);
+
+                    res.json({ success:true, message: 'User is activated successfully!' });
+                });
+
+            });
+
+        });
+
     //rates actions
     apiRouter.route('/addRate')
 
