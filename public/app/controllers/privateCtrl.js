@@ -79,6 +79,10 @@ angular.module('privateCtrl', ['privateService','userService', 'wishService'])
                 });
         };
 
+        vm.hideAllUsers = function() {
+            vm.userData = false;
+        };
+
         vm.changePassword = function(userId) {
             var pw = $('#password_'+userId).val();
             var pw2 = $('#password2_'+userId).val();

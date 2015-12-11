@@ -23,7 +23,7 @@ angular.module('wishService', [])
 	// create a wish
 	wishFactory.create = function(wishData) {
         //return true;
-		return $http.post('/api/wishes/', wishData);
+		return $http.post('/api/private/wishes/', wishData);
 	};
 
     wishFactory.find = function (findData) {

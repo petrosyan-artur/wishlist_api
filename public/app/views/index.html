@@ -51,7 +51,10 @@
             <ul class="nav navbar-nav navbar-right">
                 <li ng-if="!wish.loggedIn"><a href="/login">Login</a></li>
                 <li ng-if="!wish.loggedIn"><a href="/register">Register</a></li>
-                <li ng-if="wish.loggedIn" class="navbar-text">Logged in as: {{ wish.user.username }}!<input type="hidden" id="user_id" value="{{wish.userData._id}}"></li>
+                <li ng-if="wish.loggedIn" class="navbar-text">Logged in as: {{ wish.user.username }}!
+                    <input type="hidden" id="user_id" value="{{wish.userData._id}}">
+                    <input type="hidden" id="user_name" value="{{wish.userData.username}}">
+                </li>
                 <li ng-if="wish.loggedIn"><a href="#" ng-click="wish.doLogout()">Logout</a></li>
             </ul>
         </div>

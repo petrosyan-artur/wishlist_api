@@ -105,13 +105,17 @@ angular.module('wishCtrl', ['wishService', 'userService', 'rateService'])
         // function to add a wish
         vm.saveWish = function() {
             if (!vm.loggedIn) {
-                //$('#loginModal').modal({show:true});
                 alert('Please login to add a wish!');
-                return;
+                return false;
             }
             var userId = document.getElementById('user_id').value;
+            var username = document.getElementById('user_name').value;
+            console.log(userId, username);
             vm.wishData.userId = userId;
-            console.log(vm.wishData, userId);
+            vm.wishData.username = username;
+            //console.log(vm.wishData);
+            //return false;
+            //console.log(vm.wishData);
             // use the create function in the wishService
             Wish.create(vm.wishData)
                 .success(function(data) {

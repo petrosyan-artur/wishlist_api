@@ -58,10 +58,10 @@
                 <div id="wishModalId" style="display:none;">
                 </div>
                 <div id="likeDiv" ng-hide="wish.isRated == 2">
-                    <a class="btn btn-info glyphicon glyphicon-thumbs-up" ng-click="wish.addRate()" ng-if="wish.isRated == 0" class="animate-if"> LIKE</a>
-                    <a class="btn btn-success glyphicon glyphicon-thumbs-up" ng-if="wish.isRated == 1" class="animate-if"> LIKED</a>
-                    <span style="color: blue; margin-right: 3px; font-size: 14px; font-style: italic;">{{wish.ratesCount}} likes</span>
+                    <a class="btn btn-info glyphicon glyphicon-thumbs-up animate-show" ng-click="wish.addRate()" ng-show="wish.isRated == 0" class="animate-if"> LIKE</a>
+                    <a class="btn btn-success glyphicon glyphicon-thumbs-up animate-show" ng-show="wish.isRated == 1" class="animate-if"> LIKED</a>
                 </div>
+                <div class="likesCount">{{wish.ratesCount}} likes</div>
             </div>
             <div class="modal-footer">
                 <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
@@ -76,7 +76,6 @@
             <form class="form-horizontal" ng-submit="wish.findWish()">
                 <input type="text" ng-model="wish.findData.content" placeholder="Search a wish..." name="search"
                        id="search" class="wish_input">
-                <!--<br/>-->
                 <button class="btn btn-success" type="submit" style="margin-bottom: 4px;">Search a wish</button>
             </form>
         </div>
@@ -86,7 +85,6 @@
             <form class="form-horizontal" ng-submit="wish.saveWish()">
                 <input type="text" ng-model="wish.wishData.content" placeholder="Submit a wish..." name="addWish"
                           id="addWish" class="wish_input">
-                <!--<br/>-->
                 <button class="btn btn-info" type="submit" style="margin-bottom: 4px;">Submit a wish</button>
             </form>
         </div>

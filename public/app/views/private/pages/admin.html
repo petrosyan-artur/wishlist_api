@@ -14,15 +14,14 @@
             <form class="form-horizontal" ng-submit="private.findUser()">
                 <input type="text" ng-model="private.user.username" placeholder="Search a user..." name="searchUser"
                        id="searchUser" class="wish_input">
-                <!--<br/>-->
                 <button class="btn btn-info" type="submit" style="margin-bottom: 4px;">Search a user</button>
             </form>
         </div>
     </div>
     <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
         <div style="margin:10px auto;">
-            <button class="btn btn-info" ng-if="private.userData" style="margin-bottom: 4px;">Hide All Users</button>
-            <button class="btn btn-info" ng-if= "!private.userData" ng-click="private.getAllUsers()" style="margin-bottom: 4px;">Get All Users</button>
+            <button class="btn btn-info animate-show" ng-show="private.userData" ng-click="private.hideAllUsers()">Hide All Users</button>
+            <button class="btn btn-info animate-show" ng-show= "!private.userData" ng-click="private.getAllUsers()">Get All Users</button>
         </div>
     </div>
 </div>
@@ -34,7 +33,8 @@
             <th>Username</th>
             <th>Password</th>
             <th>Retype Password</th>
-            <th class="col-sm-3"></th>
+            <th></th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
@@ -45,11 +45,13 @@
             </td>
             <td><input type="password" name="password2" class="form-control" id="password2_{{p._id}}">
             </td>
-            <td class="col-sm-3">
+            <td>
                 <a href="#" ng-click="private.changePassword(p._id)"
                    class="btn btn-primary">Update</a>
-                <a href="#" ng-show="p.isActive" id="deactivate_{{p._id}}" ng-click="private.deactivateUser(p._id, key)" class="btn btn-danger">Deactivate</a>
-                <a href="#" ng-show="!p.isActive" id="activate_{{p._id}}" ng-click="private.activateUser(p._id, key)" class="btn btn-success">Activate</a>
+            </td>
+            <td>
+                <a href="#" ng-show="p.isActive" id="deactivate_{{p._id}}" ng-click="private.deactivateUser(p._id, key)" class="btn btn-danger animate-show">Deactivate</a>
+                <a href="#" ng-hide="p.isActive" id="activate_{{p._id}}" ng-click="private.activateUser(p._id, key)" class="btn btn-success animate-show">Activate</a>
             </td>
         </tr>
         </tbody>
@@ -71,7 +73,7 @@
             <td>{{ w._id }}</td>
             <td>{{ w.createdDate }}</td>
             <td><input type="text" value="{{ w.content }}" id="{{ w._id }}_content" style="width: 300px;padding:2px 6px; border:1px solid black;"></td>
-            <td>{{ w.userId }}</td>
+            <td>{{ w.username }}</td>
             <td class="col-sm-2">
                 <a href="#" ng-click="private.updateWish(w._id)" class="btn btn-primary">Update</a>
                 <a href="#" ng-click="private.deleteWish(w._id)" class="btn btn-danger">Delete</a>

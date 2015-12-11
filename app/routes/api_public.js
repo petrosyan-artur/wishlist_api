@@ -116,32 +116,6 @@ module.exports = function(app, express) {
 	// ----------------------------------------------------
 	apiRouter.route('/wishes')
 
-		// create a wish (accessed at POST http://localhost:8080/wishes)
-		.post(function(req, res) {
-            //res.json({success: true});
-            var d = new Date();
-            var date = d.getFullYear()+'-'+('0' + (d.getMonth() + 1)).slice(-2)+'-'+('0' + d.getDate()).slice(-2);
-            //req.body.date = date;
-            //res.json({ success: true, message: req.body.content, d: date});
-            var wish = new Wish();		// create a new instance of the Wish model
-            wish.content = req.body.content;  // set the wish content (comes from the request)
-            wish.createdDate = date;  // set the wish created date (comes from the request)
-            wish.userId = req.body.userId;  // set the wish content (comes from the request)
-
-            wish.save(function(err, result) {
-				if (err) {
-					// duplicate entry
-					if (err.code == 11000)
-						return res.json({ success: false, message: 'A wish with that content already exists. '});
-					else
-						return res.send(err);
-				}
-				// return a message
-				res.json({ success: true, message: 'Wish created!', data: result });
-			});
-
-		})
-
 		// get all the wishes (accessed at GET http://localhost:8080/api/wishes)
 		.get(function(req, res) {
             var limit = 12;
