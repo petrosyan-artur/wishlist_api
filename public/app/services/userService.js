@@ -25,6 +25,11 @@ angular.module('userService', [])
         return $http.get('/api/private/user/' + uname);
     };
 
+    // get users like username
+    userFactory.getLikeUsername = function(userData) {
+       return $http.post('/api/private/users/find', userData);
+    };
+
 	// update a user
 	//userFactory.update = function(id, userData) {
 	//	return $http.put('/api/users/' + id, userData);

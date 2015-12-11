@@ -64,7 +64,7 @@ module.exports = function(app, express) {
             wish.content = req.body.content;  // set the wish content (comes from the request)
             wish.createdDate = date;  // set the wish created date (comes from the request)
             wish.userId = req.body.userId;  // set the wish owner id (comes from the request)
-            wish.username = req.body.username;  // set the wish owner name (comes from the request)
+            wish.user = req.body.username;  // set the wish owner name (comes from the request)
 
             wish.save(function(err, result) {
                 if (err) {
@@ -172,6 +172,19 @@ module.exports = function(app, express) {
             res.json(user);
         });
     });
+
+    apiRouter.route('/users/find')
+
+        .post(function(req, res) {
+            var username = req.body.username;
+            User.find({ username: new RegExp(username, 'i')}).sort({_id:-1}).exec(function (err, users) {
+                if (!users) {
+                    res.json({success: false});
+                } else {
+                    res.json(users);
+                }
+            });
+        });
 
     apiRouter.route('/changePassword')
         // change user password

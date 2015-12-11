@@ -56,18 +56,19 @@ angular.module('privateCtrl', ['privateService','userService', 'wishService'])
                 alert('Username is empty!');
                 return false;
             }
-            User.getByUsername(vm.user.username)
+            User.getLikeUsername(vm.user)
                 .success(function(data) {
-                    if (data) {
+                    if ((data.success && data.success == false) || data.length == 0 ) {
+                        alert('User not found');
+                        return false;
+                    } else {
+                        console.log(data);
                         vm.userData = data;
                         Wish.findByUserId(data[0]._id)
                             .success(function(wishes) {
                                 vm.wishes = wishes;
                                 $('#loadMore').css('display', 'none');
                             });
-                    } else {
-                        alert('User not found');
-                        return false;
                     }
                 });
         };

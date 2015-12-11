@@ -86,17 +86,11 @@ footer {
 
 .animate-show {
     opacity: 1;
-    -moz-transition:all linear 1s;
-    -o-transition:all linear 1s;
-    transition:all linear 1s;
+    -moz-transition:all linear 0.5s;
+    -o-transition:all linear 0.5s;
+    transition:all linear 0.5s;
     display:block;
-    -webkit-transition:all linear 1s;
-}
-
-.animate-show.ng-hide-add.ng-hide-add-active,
-.animate-show.ng-hide-remove.ng-hide-remove-active {
-    -webkit-transition: all linear 0.5s;
-    transition: all linear 0.5s;
+    -webkit-transition:all linear 0.5s;
 }
 
 .animate-show.ng-hide, .animate-show.ng-show, .animate-show.ng-if {

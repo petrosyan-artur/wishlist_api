@@ -125,13 +125,6 @@ module.exports = function(app, express) {
 			Wish.find({isActive: true}).sort({_id:-1}).limit(limit).exec(function(err, wishes) {
 				if (err) res.send(err);
 
-				// return the wishes
-                //for (var i = 1; wishes.length; ++i) {
-                 //   User.findById(wishes[i].userId, function(err, user) {
-                 //       res.json(user);
-                 //      wishes[i].username = user._id;
-                 //   });
-                //}
 				res.json(wishes);
 			});
 		});
