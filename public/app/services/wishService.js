@@ -38,6 +38,11 @@ angular.module('wishService', [])
         return $http.post('/api/wishes/loadMore/', loadMoreData);
     };
 
+    // update wish
+    wishFactory.updateWish = function(data) {
+        return $http.put('/api/private/admin/wish/', data);
+    };
+
 	//// update a wish
 	//wishFactory.update = function(id, wishData) {
 	//	return $http.put('/api/wishes/' + id, wishData);

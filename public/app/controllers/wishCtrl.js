@@ -19,6 +19,12 @@ angular.module('wishCtrl', ['wishService', 'userService', 'rateService'])
                     vm.user = data.data;
                     User.getByUsername(vm.user.username).success(function (data) {
                         vm.userData = data[0];
+                        Wish.findByUserId(vm.userData._id)
+                            .success(function(data){
+                                if (data) {
+                                    vm.myWishes = data;
+                                }
+                            });
                     })
                 });
         });
@@ -240,6 +246,6 @@ angular.module('wishCtrl', ['wishService', 'userService', 'rateService'])
                         vm.isRated = 1;
                     }
                 });
-        }
+        };
 
     });

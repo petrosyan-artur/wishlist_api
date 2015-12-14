@@ -30,6 +30,11 @@ angular.module('userService', [])
        return $http.post('/api/private/users/find', userData);
     };
 
+    // change user password
+    userFactory.changePassword = function(data) {
+        return $http.post('/api/private/changePassword', data);
+    };
+
 	// update a user
 	//userFactory.update = function(id, userData) {
 	//	return $http.put('/api/users/' + id, userData);

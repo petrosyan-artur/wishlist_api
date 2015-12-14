@@ -1,0 +1,57 @@
+<style>
+    body {
+        background: #ffffff;
+    }
+</style>
+<div class="row">
+    <table class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <!--<th>_id</th>-->
+            <th>Username</th>
+            <th>Password</th>
+            <th>Retype Password</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <!--<td>{{ user.userData._id }}</td>-->
+            <td>{{ user.userData.username }}</td>
+            <td><input type="password" name="password" class="form-control" id="password_{{user.userData._id}}">
+            </td>
+            <td><input type="password" name="password2" class="form-control" id="password2_{{user.userData._id}}">
+            </td>
+            <td>
+                <a href="#" ng-click="user.changePassword(user.userData._id)"
+                   class="btn btn-primary">Update</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div class="row">
+    <table class="table table-bordered table-striped" ng-show="user.myWishes">
+        <thead>
+        <tr>
+            <!--<th>_id</th>-->
+            <th>Date Created</th>
+            <th>Content</th>
+            <th>Author</th>
+            <th class="col-sm-1"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="w in user.myWishes">
+            <!--<td>{{ w._id }}</td>-->
+            <td>{{ w.createdDate }}</td>
+            <td><input type="text" value="{{ w.content }}" id="{{ w._id }}_content" style="width: 300px;padding:2px 6px; border:1px solid black;"></td>
+            <td>{{ w.username }}</td>
+            <td class="col-sm-1">
+                <a href="#" ng-click="user.updateWish(w._id)" class="btn btn-primary">Update</a>
+                <!--<a href="#" ng-click="private.deleteWish(w._id)" class="btn btn-danger">Delete</a>-->
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>

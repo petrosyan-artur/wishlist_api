@@ -48,7 +48,13 @@
             <ul class="nav navbar-nav navbar-right">
                 <li ng-if="!private.loggedIn"><a target="_self" href="/login">Login</a></li>
                 <!--<li ng-if="!wish.loggedIn"><a href="/register">Register</a></li>-->
-                <li ng-if="private.loggedIn" class="navbar-text">Logged in as: {{ private.user.username }}!<input type="hidden" id="user_id" value="{{private.userData._id}}"></li>
+                <li ng-if="private.loggedIn">
+                    <a href="/private/adminpage">
+                        Administration Page
+                    </a>
+                    <input type="hidden" id="user_id" value="{{private.userData._id}}">
+                    <input type="hidden" id="user_name" value="{{private.userData.username}}">
+                </li>
                 <li ng-if="private.loggedIn"><a target="_self" href="#" ng-click="private.doLogout()">Logout</a></li>
             </ul>
         </div>

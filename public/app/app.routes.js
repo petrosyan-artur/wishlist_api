@@ -25,11 +25,11 @@ angular.module('app.routes', ['ngRoute'])
                 controllerAs: 'register'
             })
 
-            .when('/wish/:wish_id', {
-                templateUrl: 'app/views/pages/single.html',
-                controller: 'wishController',
-                controllerAs: 'wish'
-            })
+            //.when('/wish/:wish_id', {
+            //    templateUrl: 'app/views/pages/user.html',
+            //    controller: 'wishController',
+            //    controllerAs: 'wish'
+            //})
 
             //admin page
             .when('/private/adminpage', {
@@ -39,15 +39,15 @@ angular.module('app.routes', ['ngRoute'])
             })
 
             // page to edit a wish
-            .when('/private/adminpage/wishes/:wish_id', {
-                templateUrl: 'app/views/pages/single.html',
-                controller: 'privateWishEditController',
+            .when('/user', {
+                templateUrl: 'app/views/pages/user.html',
+                controller: 'userController',
                 controllerAs: 'user'
         });
 
         // single wish page
         //.when('/wish/:wish_id', {
-        //    templateUrl: 'app/views/pages/users/single.html',
+        //    templateUrl: 'app/views/pages/users/user.html',
         //    controller: 'userEditController',
         //    controllerAs: 'user'
         //});
