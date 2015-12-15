@@ -179,7 +179,8 @@ angular.module('wishCtrl', ['wishService', 'userService', 'rateService'])
                         vm.wishes.push({
                             _id: data.wishes[i]._id,
                             content: data.wishes[i].content,
-                            createdDate: data.wishes[i].createdDate
+                            createdDate: data.wishes[i].createdDate,
+                            username: data.wishes[i].username
                         });
                     }
                     Wish.count()
@@ -222,6 +223,24 @@ angular.module('wishCtrl', ['wishService', 'userService', 'rateService'])
                     if (data.success && data.success == true) {
                         vm.isRated = true;
                         vm.ratesCount = vm.ratesCount + 1;
+                    } else {
+                        alert('Something went wrong, please try again!');
+                    }
+                });
+        };
+
+        vm.removeRate = function() {
+            var wishId = $('#wishModalId').text();
+            var userId = $('#user_id').val();
+            var rateData = {};
+            rateData.wishId = wishId;
+            rateData.userId = userId;
+            console.log(rateData);
+            Rate.removeRate(rateData)
+                .success(function(data){
+                    if (data.success && data.success == true) {
+                        vm.isRated = false;
+                        vm.ratesCount = vm.ratesCount - 1;
                     } else {
                         alert('Something went wrong, please try again!');
                     }

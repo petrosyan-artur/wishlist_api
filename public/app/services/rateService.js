@@ -15,6 +15,11 @@ angular.module('rateService', [])
 		return $http.post('/api/private/addRate/', rateData);
 	};
 
+    // remove a rate
+    rateFactory.removeRate = function(rateData) {
+        return $http.post('/api/private/removeRate/', rateData);
+    };
+
     // check if already rated
     rateFactory.checkRated = function (rateData) {
         return $http.post('/api/private/checkRated', rateData);

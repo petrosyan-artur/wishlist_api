@@ -158,7 +158,9 @@ angular.module('privateCtrl', ['privateService','userService', 'wishService'])
                             _id: data.wishes[i]._id,
                             content: data.wishes[i].content,
                             createdDate: data.wishes[i].createdDate,
-                            isActive: data.wishes[i].isActive
+                            isActive: data.wishes[i].isActive,
+                            username: data.wishes[i].username,
+                            userId: data.wishes[i].userId
                         });
                     }
                     Wish.count()

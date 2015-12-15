@@ -284,6 +284,19 @@ module.exports = function(app, express) {
             });
         });
 
+    apiRouter.route('/removeRate')
+
+        .post(function(req, res) {
+            if (!req.body.wishId || !req.body.userId) {
+                res.json({success: false, message: "Something went wrong!"});
+                return false;
+            }
+            Rate.remove({ wishId: req.body.wishId, userId: req.body.userId }, function(err, rate) {
+                if (err) res.send(err);
+                res.json({ success: true, message: 'Successfully deleted!', rate: rate });
+            });
+        });
+
     apiRouter.route('/checkRated')
 
         .post(function(req, res) {

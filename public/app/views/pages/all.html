@@ -57,9 +57,12 @@
                 <br>
                 <div id="wishModalId" style="display:none;">
                 </div>
-                <div id="likeDiv" ng-hide="wish.isRated == 2">
-                    <a class="btn btn-info glyphicon glyphicon-thumbs-up animate-show" ng-click="wish.addRate()" ng-show="wish.isRated == 0" class="animate-if"> LIKE</a>
-                    <a class="btn btn-success glyphicon glyphicon-thumbs-up animate-show" ng-show="wish.isRated == 1" class="animate-if"> LIKED</a>
+                <div id="likeDiv">
+                    <a class="btn btn-info glyphicon glyphicon-thumbs-up animate-show animate-if" ng-click="wish.addRate()" ng-show="wish.isRated == 0"> LIKE</a>
+                    <a class="btn btn-success glyphicon glyphicon-thumbs-up animate-show animate-if" ng-click="wish.removeRate()" ng-show="wish.isRated == 1" id="button_liked" onmouseover="likeButtonOnMouseOver()" onmouseout="likeButtonOnMouseOut()">
+                        <span id="button_liked_span"> LIKED</span>
+                        <span id="button_unlike_span"> UNLIKE</span>
+                    </a>
                 </div>
                 <div class="likesCount">{{wish.ratesCount}} likes</div>
             </div>

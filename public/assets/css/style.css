@@ -117,3 +117,11 @@ footer {
     text-align: center;
     width: 100px;
 }
+
+#button_unlike_span {
+    display:none;
+}
+
+.glyphicon-thumbs-up:before, .glyphicon-remove:before {
+    float: left;
+}
