@@ -63,9 +63,7 @@ module.exports = function(app, express) {
                         token: token
                     });
                 }
-
             }
-
         });
     });
 
@@ -110,81 +108,61 @@ module.exports = function(app, express) {
 		res.json({ message: 'hooray! welcome to our api!' });	
 	});
 
+	// get wishes
 
-
-	// on routes that end in /wishes
-	// ----------------------------------------------------
 	apiRouter.route('/wishes')
 
 		// get all the wishes (accessed at GET http://localhost:8080/api/wishes)
 		.get(function(req, res) {
-            var limit = 12;
-            if (req.body.limit) {
-                limit = req.body.limit;
+            //wish search case
+            if (req.query.content) {
+                Wish.find({ content: new RegExp(req.query.content, 'i')}).sort({_id:-1}).exec(function (err, docs) {
+                     res.json(docs);
+                });
+                return;
             }
-			Wish.find({isActive: true}).sort({_id:-1}).limit(limit).exec(function(err, wishes) {
+            //wish loadMore case
+            if (req.query.limit) {
+                Wish.find({isActive: true}).sort({_id:-1}).skip(req.query.limit-4).limit(4).exec(function(err, wishes) {
+                    if (err) res.send(err);
+                    res.json({wishes: wishes, limit: limit});
+                });
+                return;
+            }
+            //returns all active wishes count
+            if (req.query.count && req.query.count == 1) {
+                Wish.count({isActive: true}, function(err, count) {
+                    if (err) res.send(err);
+                    if (!count) {
+                        res.json({success: false, count: 0});
+                    } else {
+                        res.json({success: true, count: count});
+                    }
+                });
+                return;
+            }
+            //returns 'limit' number of wishes (on main page)
+            var limit = 12;
+            Wish.find({isActive: true}).sort({_id:-1}).limit(limit).exec(function(err, wishes) {
 				if (err) res.send(err);
 
 				res.json(wishes);
 			});
 		});
 
-	// on routes that end in /users/:user_id
-	// ----------------------------------------------------
+	// get wish by wish_id
 	apiRouter.route('/wishes/:wish_id')
 
-		// get the wish with that id
 		.get(function(req, res) {
 			Wish.findById(req.params.wish_id, function(err, wish) {
 				if (err) res.send(err);
 
-				// return that wish
 				res.json(wish);
 			});
 		});
 
-    apiRouter.route('/wishes/find/')
-
-        // get the wish with content like content
-        .post(function(req, res) {
-            var content = req.body.content;
-            Wish.find({ content: new RegExp(content, 'i')}).sort({_id:-1}).exec(function (err, docs) {
-                if (!docs) {
-                    res.json({success: false});
-                } else {
-                    res.json(docs);
-                }
-            });
-        });
-
-    apiRouter.route('/wishes/loadMore')
-
-        .post(function(req, res) {
-            //var limit = 16;
-            if (req.body.limit) {
-               var limit = req.body.limit;
-            }
-            Wish.find().sort({_id:-1}).skip(limit-4).limit(4).exec(function(err, wishes) {
-                if (err) res.send(err);
-                res.json({wishes: wishes, limit: limit});
-            });
-        });
-
-    apiRouter.route('/wishes/allCount')
-
-        .post(function(req, res) {
-            Wish.count({isActive: true}, function(err, count) {
-                if (err) res.send(err);
-                if (!count) {
-                    res.json({success: false, count: 0});
-                } else {
-                    res.json({success: true, count: count});
-                }
-            });
-        });
-
-    //getRate for wish with wish_id
-    apiRouter.route('/getRate/:wish_id')
+    //get rates for wish with wish_id
+    apiRouter.route('/rates/:wish_id')
 
         .get(function(req, res) {
             Rate.count({wishId: req.params.wish_id}, function(err, rates) {

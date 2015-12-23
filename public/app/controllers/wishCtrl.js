@@ -153,7 +153,7 @@ angular.module('wishCtrl', ['wishService', 'userService', 'rateService'])
             //vm.processing = true;
 
             // use the create function in the wishService
-            Wish.find(vm.findData)
+            Wish.find(vm.findData.content)
                 .success(function(data) {
                     vm.processing = false;
                     vm.wishes = data;
@@ -165,15 +165,12 @@ angular.module('wishCtrl', ['wishService', 'userService', 'rateService'])
         };
         vm.wishesCount = 1000000;
         // function to load 16 more wishes
-        vm.loadMoreWish = function($timeout) {
+        vm.loadMoreWish = function() {
             vm.loadMore = false;
             var limit = document.getElementById('loadLimit').value;
             limit = parseInt(limit) + 4;
-            var lm = {};
-            lm.limit = limit;
-            console.log(lm);
 
-            Wish.loadMore(lm)
+            Wish.loadMore(limit)
                 .success(function(data) {
                     for (var i=0; i < data.wishes.length; i++) {
                         vm.wishes.push({

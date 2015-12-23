@@ -23,7 +23,7 @@
             <td><input type="password" name="password2" class="form-control" id="password2_{{user.userData._id}}">
             </td>
             <td>
-                <a href="#" ng-click="user.changePassword(user.userData._id)"
+                <a href="#" ng-click="user.changePassword(user.userData._id, user.userData.username)"
                    class="btn btn-primary">Update</a>
             </td>
         </tr>

@@ -27,7 +27,7 @@ angular.module('userCtrl', ['wishService', 'userService', 'rateService'])
             });
 
 
-        vm.changePassword = function (userId) {
+        vm.changePassword = function (userId, username) {
             var pw = $('#password_' + userId).val();
             var pw2 = $('#password2_' + userId).val();
             if (pw == '') {
@@ -40,10 +40,11 @@ angular.module('userCtrl', ['wishService', 'userService', 'rateService'])
             }
             var userData = {};
             userData.userId = userId;
+            userData.username = username;
             userData.password = pw;
             userData.password2 = pw2;
 
-            User.changePassword(userData)
+            User.changePassword(userData, username)
                 .success(function (data) {
                     if (data.success == true) {
                         $('#password_' + userId).val('');

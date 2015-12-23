@@ -8,7 +8,7 @@ var bodyParser = require('body-parser');
 // super secret for creating tokens
 var superSecret = config.secret;
 
-module.exports = function(app, express) {
+var apiPrivate = function(app, express) {
 
 	var apiRouter = express.Router();
 
@@ -55,11 +55,9 @@ module.exports = function(app, express) {
 
         // create a wish (accessed at POST http://localhost:8080/wishes)
         .post(function(req, res) {
-            //res.json({success: true});
             var d = new Date();
             var date = d.getFullYear()+'-'+('0' + (d.getMonth() + 1)).slice(-2)+'-'+('0' + d.getDate()).slice(-2);
-            //req.body.date = date;
-            //res.json({ success: true, message: req.body.content, d: date});
+
             var wish = new Wish();		// create a new instance of the Wish model
             wish.content = req.body.content;  // set the wish content (comes from the request)
             wish.createdDate = date;  // set the wish created date (comes from the request)
@@ -78,285 +76,36 @@ module.exports = function(app, express) {
                 res.json({ success: true, message: 'Wish created!', data: result });
             });
 
-        });
-
-    // on routes that end in /users
-    // ----------------------------------------------------
-    apiRouter.route('/users')
-
-        // create a user (accessed at POST http://localhost:8080/users)
-        //.post(function(req, res) {
-        //    var user = new User();		// create a new instance of the User model
-        //    user.name = req.body.name;  // set the users name (comes from the request)
-        //    user.username = req.body.username;  // set the users username (comes from the request)
-        //    user.password = req.body.password;  // set the users password (comes from the request)
-        //
-        //    user.save(function(err) {
-        //        if (err) {
-        //            // duplicate entry
-        //            if (err.code == 11000)
-        //                return res.json({ success: false, message: 'A user with that username already exists. '});
-        //            else
-        //                return res.send(err);
-        //        }
-        //
-        //        // return a message
-        //        res.json({ message: 'User created!' });
-        //    });
-        //
-        //})
-
-        // get all the users (accessed at GET http://localhost:8080/api/users)
-        .get(function(req, res) {
-
-            User.find({}, function(err, users) {
-                if (err) res.send(err);
-
-                // return the users
-                res.json(users);
-            });
-        });
-
-    // on routes that end in /users/:user_id
-    // ----------------------------------------------------
-    apiRouter.route('/users/:user_id')
-
-        // get the user with that id
-        .get(function(req, res) {
-            User.findById(req.params.user_id, function(err, user) {
-                if (err) res.send(err);
-
-                // return that user
-                res.json(user);
-            });
         })
 
-        // update the user with this id
+        //update a wish
         .put(function(req, res) {
-            User.findById(req.params.user_id, function(err, user) {
 
-                if (err) res.send(err);
-
-                // set the new user information if it exists in the request
-                if (req.body.name) user.name = req.body.name;
-                if (req.body.username) user.username = req.body.username;
-                if (req.body.password) user.password = req.body.password;
-
-                // save the user
-                user.save(function(err) {
-                    if (err) res.send(err);
-
-                    // return a message
-                    res.json({ message: 'User updated!' });
-                });
-
-            });
-        });
-
-        // delete the user with this id
-        //.delete(function(req, res) {
-        //    User.remove({
-        //        _id: req.params.user_id
-        //    }, function(err, user) {
-        //        if (err) res.send(err);
-        //
-        //        res.json({ message: 'Successfully deleted' });
-        //    });
-        //});
-
-    //find user by username
-    apiRouter.get('/user/:username', function(req, res) {
-        User.find({username: req.params.username}, function(err, user) {
-            if (err) res.send(err);
-            // return that user
-            res.json(user);
-        });
-    });
-
-    apiRouter.route('/users/find')
-
-        .post(function(req, res) {
-            var username = req.body.username;
-            User.find({ username: new RegExp(username, 'i')}).sort({_id:-1}).exec(function (err, users) {
-                if (!users) {
-                    res.json({success: false});
-                } else {
-                    res.json(users);
-                }
-            });
-        });
-
-    apiRouter.route('/changePassword')
-        // change user password
-        .post(function(req, res) {
-            if (!req.body.password || req.body.password == '') {
-                return res.json({ success: false, message: 'Passwords is empty! '});
-            }
-            if (req.body.password != req.body.password2) {
-                return res.json({ success: false, message: 'Passwords Mismatch! '});
-            }
-            User.findById(req.body.userId, function(err, user) {
-
-                if (err) res.send(err);
-
-                if (!user) {
-                    res.json({ success:false, message: 'Invalid User!' });
-                }
-                if (req.body.password) user.password = req.body.password;
-
-                user.save(function(err) {
-                    if (err) res.send(err);
-
-                    res.json({ success:true, message: 'Password is updated!' });
-                });
-
-            });
-
-        });
-
-    apiRouter.route('/user/deactivate')
-        // deactivate user
-        .post(function(req, res) {
-            if (!req.body.userId) {
-                return res.json({ success: false, message: 'Invalid userId!'});
-            }
-            User.findById(req.body.userId, function(err, user) {
-
-                if (err) res.send(err);
-
-                if (!user) {
-                    res.json({ success:false, message: 'Invalid User!' });
-                }
-
-                user.isActive = false;
-
-                user.save(function(err) {
-                    if (err) res.send(err);
-
-                    res.json({ success:true, message: 'User is deactivated successfully!' });
-                });
-
-            });
-
-        });
-
-    apiRouter.route('/user/activate')
-        // deactivate user
-        .post(function(req, res) {
-            if (!req.body.userId) {
-                return res.json({ success: false, message: 'Invalid userId!'});
-            }
-            User.findById(req.body.userId, function(err, user) {
-
-                if (err) res.send(err);
-
-                if (!user) {
-                    res.json({ success:false, message: 'Invalid User!' });
-                }
-
-                user.isActive = true;
-
-                user.save(function(err) {
-                    if (err) res.send(err);
-
-                    res.json({ success:true, message: 'User is activated successfully!' });
-                });
-
-            });
-
-        });
-
-    //rates actions
-    apiRouter.route('/addRate')
-
-        .post(function(req, res) {
-            var rate = new Rate();
-            //rate.rate = req.body.rate;
-            rate.wishId = req.body.wishId;
-            rate.userId = req.body.userId;
-
-            rate.save(function(err, result) {
-                if (err) {
-                    res.send(err);
-                }
-                // return a message
-                res.json({ success: true, message: 'Rated!', data: result });
-            });
-        });
-
-    apiRouter.route('/removeRate')
-
-        .post(function(req, res) {
-            if (!req.body.wishId || !req.body.userId) {
-                res.json({success: false, message: "Something went wrong!"});
-                return false;
-            }
-            Rate.remove({ wishId: req.body.wishId, userId: req.body.userId }, function(err, rate) {
-                if (err) res.send(err);
-                res.json({ success: true, message: 'Successfully deleted!', rate: rate });
-            });
-        });
-
-    apiRouter.route('/checkRated')
-
-        .post(function(req, res) {
-            if (req.body.userId) {
-                var userId = req.body.userId;
-            }
-            if (req.body.wishId) {
-                var wishId = req.body.wishId;
-            }
-            Rate.findOne({userId: userId, wishId: wishId}).exec(function(err, rate) {
-                if (err) res.send(err);
-                if (!rate) {
-                    res.json({success:true, isRated: false});
-                } else {
-                    res.json({success:true, isRated: true});
-                }
-            });
-        });
-
-    // api endpoint to get user information
-    apiRouter.get('/me', function(req, res) {
-        res.send(req.decoded);
-    });
-
-    apiRouter.route('/test')
-
-        .post(function(req, res) {
-                res.json({success: 'true!'});
-        });
-
-    //private administration routes
-    apiRouter.route('/admin/wish')
-
-        .put(function(req, res) {
             if (req.body.wishId && req.body.content) {
-                var wishId = req.body.wishId;
-                var content = req.body.content;
-            } else {
-                res.json({success:false, message: 'Invalid params.'});
-            }
 
-            Wish.findById(wishId, function(err, wish) {
+                Wish.findById(req.body.wishId, function (err, wish) {
 
-                if (err) res.send(err);
-
-                // set the wish information if it exists in the request
-                if (req.body.content) wish.content = req.body.content;
-
-                // save the wish
-                wish.save(function(err) {
                     if (err) res.send(err);
 
-                    // return a message
-                    res.json({ success:true, message: 'Wish updated!' });
+                    // set the wish information if it exists in the request
+                    if (req.body.content) wish.content = req.body.content;
+
+                    // save the wish
+                    wish.save(function (err) {
+                        if (err) res.send(err);
+
+                        // return a message
+                        res.json({success: true, message: 'Wish updated!'});
+                    });
                 });
 
-            });
+            } else {
+                res.json({success: false, message: 'Invalid params.'});
+            }
         });
 
-    apiRouter.route('/admin/wish/:wishId')
+    //delete wish by wishId
+    apiRouter.route('/wishes/:wishId')
 
         .delete(function(req, res) {
             Wish.remove({
@@ -368,19 +117,183 @@ module.exports = function(app, express) {
             });
         });
 
-    apiRouter.route('/admin/wishes/find/:userId')
-
+    apiRouter.route('/wishes')
+    //get users' wishes
         .get(function(req, res) {
-            var ObjectId = require('mongoose').Types.ObjectId;
-            var userId = new ObjectId(req.params.userId);
-            Wish.find({ userId: userId}).sort({_id:-1}).exec(function (err, wishes) {
-                if (!wishes) {
-                    res.json({success: false});
+            if (req.query.userId) {
+                var ObjectId = require('mongoose').Types.ObjectId;
+                var userId = new ObjectId(req.query.userId);
+                Wish.find({ userId: userId}).sort({_id:-1}).exec(function (err, wishes) {
+                    if (!wishes) {
+                        res.json({success: false});
+                    } else {
+                        res.json(wishes);
+                    }
+                });
+            }
+        });
+
+    // on routes that end in /users
+    // ----------------------------------------------------
+    apiRouter.route('/users')
+
+        // get all the users or get userData by username(accessed at GET http://localhost:8080/api/users)
+        .get(function (req, res) {
+            if (req.query.username && req.query.requester && (req.query.username == req.query.requester)) {
+            //find user by username
+                User.find({username: req.query.username}, function (err, user) {
+                    if (err) res.send(err);
+                    // return that user
+                    res.json(user);
+                });
+                return;
+            }
+
+            if (req.query.requester && req.query.requester == 'wishlistAdmin') {
+            //find user like username
+                if (req.query.like && req.query.like == 1 && req.query.username) {
+                    User.find({username: new RegExp(req.query.username, 'i')}).sort({_id: -1}).exec(function (err, users) {
+                        res.json(users);
+                    });
+                    return;
+                }
+            //find all users
+                User.find({}, function (err, users) {
+                    if (err) res.send(err);
+                    // return the users
+                    res.json(users);
+                });
+            } else {
+                res.json({success: false, message: 'Private request roles required!'})
+            }
+        })
+
+        .put(function(req, res) {
+
+            if (req.query.requester && (req.query.requester == 'wishlistAdmin' || req.query.requester == req.body.username)) {
+                //change password
+                if (req.query.action == 'changePassword') {
+
+                    if (!req.body.password || req.body.password == '') {
+                        return res.json({ success: false, message: 'Passwords is empty! '});
+                    }
+                    if (req.body.password != req.body.password2) {
+                        return res.json({ success: false, message: 'Passwords Mismatch! '});
+                    }
+                    User.findById(req.body.userId, function(err, user) {
+
+                        if (err) res.send(err);
+
+                        if (!user) {
+                            res.json({ success:false, message: 'Invalid User!' });
+                        }
+                        if (req.body.password) user.password = req.body.password;
+
+                        user.save(function(err) {
+                            if (err) res.send(err);
+
+                            res.json({ success:true, message: 'Password is updated!' });
+                        });
+
+                    });
+                }
+                //activate deactivate user
+                if (req.query.action == 'activate' || req.query.action == 'deactivate') {
+                    if (!req.body.userId) {
+                        return res.json({ success: false, message: 'Invalid userId!'});
+                    }
+                    User.findById(req.body.userId, function(err, user) {
+
+                        if (err) res.send(err);
+
+                        if (!user) {
+                            res.json({ success:false, message: 'Invalid User!' });
+                        }
+
+                        if (req.query.action == 'activate') {user.isActive = true; var msg = 'User is activated successfully!';}
+                        if (req.query.action == 'deactivate') {user.isActive = false; msg = 'User is deactivated successfully!';}
+
+                        user.save(function(err) {
+                            if (err) res.send(err);
+
+                            res.json({ success:true, message: msg });
+                        });
+
+                    });
+                }
+            } else {
+                res.json({ success:false, message: 'Private request roles required!' });
+            }
+        });
+
+    // on routes that end in /users/:user_id
+    // ----------------------------------------------------
+    apiRouter.route('/users/:user_id')
+
+        // get the user with that id
+        .get(function(req, res) {
+            User.findById(req.params.user_id, function(err, user) {
+                if (err) res.send(err);
+                if (req.query.requester && (req.query.requester == user.username || req.query.requester == 'wishlistAdmin')) {
+                    // return that user
+                    res.json(user);
                 } else {
-                    res.json(wishes);
+                    res.json({success:false, message:'Private request roles required!'})
                 }
             });
         });
 
+    //rates actions
+    apiRouter.route('/rates')
+        //add rate
+        .post(function(req, res) {
+            var rate = new Rate();
+            rate.wishId = req.body.wishId;
+            rate.userId = req.body.userId;
+
+            rate.save(function(err, result) {
+                if (err) {
+                    res.send(err);
+                }
+                // return a message
+                res.json({ success: true, message: 'Rated!', data: result });
+            });
+        })
+
+        .get(function(req, res) {
+            if (req.query.userId) {
+                var userId = req.query.userId;
+            }
+            if (req.query.wishId) {
+                var wishId = req.query.wishId;
+            }
+            Rate.findOne({userId: userId, wishId: wishId}).exec(function(err, rate) {
+                if (err) res.send(err);
+                if (!rate) {
+                    res.json({success:true, isRated: false});
+                } else {
+                    res.json({success:true, isRated: true});
+                }
+            });
+        });
+
+    //delete rates by user_id and wish_id
+    apiRouter.route('/rates/:user_id/:wish_id')
+
+        .delete(function(req, res) {
+            Rate.remove({ wishId: req.params.wishId, userId: req.params.userId }, function(err, rate) {
+                if (err) res.send(err);
+                res.json({ success: true, message: 'Successfully deleted!', rate: rate });
+            });
+        });
+
+
+    // api endpoint to get user information
+    apiRouter.get('/me', function(req, res) {
+        res.send(req.decoded);
+    });
+
 	return apiRouter;
 };
+
+module.exports = apiPrivate;

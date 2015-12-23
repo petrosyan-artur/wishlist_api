@@ -10,37 +10,39 @@ angular.module('wishService', [])
 		return $http.get('/api/wishes/' + id);
 	};
 
-	// get all wishes
+	// get all wishes (limited)
 	wishFactory.all = function() {
 		return $http.get('/api/wishes/');
 	};
 
+    //find wishes by passing content
+    wishFactory.find = function (content) {
+        return $http.get('/api/wishes?content='+content);
+    };
+
+    //load more wishes by passing limit, offset is calculating in node controller automatically
+    wishFactory.loadMore = function (limit) {
+        return $http.get('/api/wishes?limit='+limit);
+    };
+
     // get all wishes count
     wishFactory.count = function() {
-        return $http.post('/api/wishes/allCount');
+        return $http.get('/api/wishes?count=1');
     };
 
 	// create a wish
 	wishFactory.create = function(wishData) {
-        //return true;
 		return $http.post('/api/private/wishes/', wishData);
 	};
 
-    wishFactory.find = function (findData) {
-        return $http.post('/api/wishes/find/', findData);
-    };
-
+    //find wish by userId
     wishFactory.findByUserId = function (userId) {
-        return $http.get('/api/private/admin/wishes/find/'+ userId);
-    };
-
-    wishFactory.loadMore = function (loadMoreData) {
-        return $http.post('/api/wishes/loadMore/', loadMoreData);
+        return $http.get('/api/private/wishes?userId='+ userId);
     };
 
     // update wish
     wishFactory.updateWish = function(data) {
-        return $http.put('/api/private/admin/wish/', data);
+        return $http.put('/api/private/wishes/', data);
     };
 
 	//// update a wish

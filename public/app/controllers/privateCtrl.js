@@ -56,6 +56,7 @@ angular.module('privateCtrl', ['privateService','userService', 'wishService'])
                 alert('Username is empty!');
                 return false;
             }
+            vm.user.requester = 'wishlistAdmin';
             User.getLikeUsername(vm.user)
                 .success(function(data) {
                     if ((data.success && data.success == false) || data.length == 0 ) {
@@ -74,8 +75,9 @@ angular.module('privateCtrl', ['privateService','userService', 'wishService'])
         };
 
         vm.getAllUsers = function() {
-            User.all()
+            User.all('wishlistAdmin')
                 .success(function(data){
+                    console.log(data);
                     vm.userData = data;
                 });
         };
@@ -100,7 +102,7 @@ angular.module('privateCtrl', ['privateService','userService', 'wishService'])
             userData.password = pw;
             userData.password2 = pw2;
 
-            Private.changePassword(userData)
+            Private.changePassword(userData, 'wishlistAdmin')
                 .success(function(data){
                    if (data.success == true) {
                        $('#password_'+userId).val('');
@@ -117,7 +119,7 @@ angular.module('privateCtrl', ['privateService','userService', 'wishService'])
             var userData = {};
             userData.userId = userId;
 
-            Private.deactivateUser(userData)
+            Private.deactivateUser(userData, 'wishlistAdmin')
                 .success(function(data){
                     if (data.success == true) {
                         alert(data.message);
@@ -131,7 +133,7 @@ angular.module('privateCtrl', ['privateService','userService', 'wishService'])
             var userData = {};
             userData.userId = userId;
 
-            Private.activateUser(userData)
+            Private.activateUser(userData, 'wishlistAdmin')
                 .success(function(data){
                     if (data.success == true) {
                         alert(data.message);

@@ -40,10 +40,14 @@ app.use(express.static(__dirname + '/public'));
 // API ROUTES ------------------------
 var apiRoutesPublic = require('./app/routes/api_public')(app, express);
 app.use('/api', apiRoutesPublic);
+app.use('/api/v1', apiRoutesPublic);
 
 var apiRoutesPrivate = require('./app/routes/api_private')(app, express);
 app.use('/api/private', apiRoutesPrivate);
+app.use('/api/v1/private', apiRoutesPrivate);
 
+//var apiRoutesV1 = require('./app/routes/api')(app, express);
+//app.use('/api/v1', apiRoutesV1);
 
 app.get('/private/adminpage', function(req, res) {
     res.sendFile(path.join(__dirname + '/public/app/views/private/index.html'));

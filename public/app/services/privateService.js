@@ -12,27 +12,27 @@ angular.module('privateService', [])
 
         // edit wish
         privateFactory.updateWish = function(data) {
-            return $http.put('/api/private/admin/wish/', data);
+            return $http.put('/api/private/wishes/', data);
         };
 
         // delete wish
         privateFactory.deleteWish = function(id) {
-            return $http.delete('/api/private/admin/wish/' + id);
+            return $http.delete('/api/private/wishes/' + id);
         };
 
         // change user password
-        privateFactory.changePassword = function(data) {
-            return $http.post('/api/private/changePassword', data);
+        privateFactory.changePassword = function(data, requester) {
+            return $http.put('/api/private/users?action=changePassword&requester='+requester, data);
         };
 
         // deactivate user
-        privateFactory.deactivateUser = function(data) {
-            return $http.post('/api/private/user/deactivate', data);
+        privateFactory.deactivateUser = function(data, requester) {
+            return $http.put('/api/private/users?action=deactivate&requester='+requester, data);
         };
 
         // activate user
-        privateFactory.activateUser = function(data) {
-            return $http.post('/api/private/user/activate', data);
+        privateFactory.activateUser = function(data, requester) {
+            return $http.put('/api/private/users?action=activate&requester='+requester, data);
         };
 
 	return privateFactory;
