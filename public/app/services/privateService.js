@@ -12,12 +12,12 @@ angular.module('privateService', [])
 
         // edit wish
         privateFactory.updateWish = function(data) {
-            return $http.put('/api/private/wishes/', data);
+            return $http.put('/api/private/wishes?requester=wishlistAdmin', data);
         };
 
         // delete wish
-        privateFactory.deleteWish = function(id) {
-            return $http.delete('/api/private/wishes/' + id);
+        privateFactory.deleteWish = function(id, requester) {
+            return $http.delete('/api/private/wishes/' + id +'?requester='+requester);
         };
 
         // change user password

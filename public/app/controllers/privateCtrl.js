@@ -3,6 +3,7 @@ angular.module('privateCtrl', ['privateService','userService', 'wishService'])
     .controller('privateController', function(Private, $routeParams, $rootScope, $location, Auth, User, Wish) {
 
         var vm = this;
+        vm.admin = 'wishlistAdmin';
 
         vm.loggedIn = Auth.isLoggedIn();
         if (!vm.loggedIn) {
@@ -19,7 +20,7 @@ angular.module('privateCtrl', ['privateService','userService', 'wishService'])
                 .then(function (data) {
                     console.log(data);
                     vm.user = data.data;
-                    if (vm.user.username != 'wishlistAdmin') {
+                    if (vm.user.username != vm.admin) {
                         window.location = '/';
                         //$location.path('/');
                     }
@@ -102,7 +103,7 @@ angular.module('privateCtrl', ['privateService','userService', 'wishService'])
             userData.password = pw;
             userData.password2 = pw2;
 
-            Private.changePassword(userData, 'wishlistAdmin')
+            Private.changePassword(userData, vm.admin)
                 .success(function(data){
                    if (data.success == true) {
                        $('#password_'+userId).val('');
@@ -119,7 +120,7 @@ angular.module('privateCtrl', ['privateService','userService', 'wishService'])
             var userData = {};
             userData.userId = userId;
 
-            Private.deactivateUser(userData, 'wishlistAdmin')
+            Private.deactivateUser(userData, vm.admin)
                 .success(function(data){
                     if (data.success == true) {
                         alert(data.message);
@@ -133,7 +134,7 @@ angular.module('privateCtrl', ['privateService','userService', 'wishService'])
             var userData = {};
             userData.userId = userId;
 
-            Private.activateUser(userData, 'wishlistAdmin')
+            Private.activateUser(userData, vm.admin)
                 .success(function(data){
                     if (data.success == true) {
                         alert(data.message);
@@ -149,11 +150,8 @@ angular.module('privateCtrl', ['privateService','userService', 'wishService'])
             vm.loadMore = false;
             var limit = document.getElementById('loadLimit').value;
             limit = parseInt(limit) + 4;
-            var lm = {};
-            lm.limit = limit;
-            console.log(lm);
 
-            Wish.loadMore(lm)
+            Wish.loadMore(limit)
                 .success(function(data) {
                     for (var i=0; i < data.wishes.length; i++) {
                         vm.wishes.push({
@@ -204,7 +202,7 @@ angular.module('privateCtrl', ['privateService','userService', 'wishService'])
         };
         vm.deleteWish = function (wishId) {
             console.log(wishId);
-            Private.deleteWish(wishId)
+            Private.deleteWish(wishId, vm.admin)
                 .success(function(res){
                     console.log(res);
                     if(res.success == true) {

@@ -59,6 +59,7 @@ angular.module('userCtrl', ['wishService', 'userService', 'rateService'])
 
         vm.updateWish = function (wishId) {
             var content = $('#'+wishId+'_content').val();
+            var username = $('#user_name').val();
             if (content == '') {
                 alert('Wish cannot be empty!');
                 return false;
@@ -71,7 +72,7 @@ angular.module('userCtrl', ['wishService', 'userService', 'rateService'])
                     console.log(result.rates);
                     //return false;
                     if(result.rates == 0) {
-                        Wish.updateWish(data)
+                        Wish.updateWish(data, username)
                             .success(function(res){
                                 if(res.success == true) {
                                     alert('The wish is successfully updated!');

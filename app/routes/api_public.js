@@ -4,6 +4,7 @@ var Rate       = require('../models/rate');
 var jwt        = require('jsonwebtoken');
 var config     = require('../../config');
 var bodyParser = require('body-parser');
+var rm         = require('../services/rateManager');
 
 // super secret for creating tokens
 var superSecret = config.secret;
@@ -173,6 +174,13 @@ module.exports = function(app, express) {
                     res.json({success: true, rates: rates});
                 }
             });
+        });
+
+    //get test route
+    apiRouter.route('/test')
+
+        .get(function(req, res) {
+            res.json({ss:rm.sum(req)});
         });
 
 	return apiRouter;

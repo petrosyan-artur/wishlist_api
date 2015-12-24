@@ -87,16 +87,20 @@ var apiPrivate = function(app, express) {
 
                     if (err) res.send(err);
 
-                    // set the wish information if it exists in the request
-                    if (req.body.content) wish.content = req.body.content;
+                    if (req.query.requester && (req.query.requester == 'wishlistAdmin' || req.query.requester == wish.username)) {
+                        // set the wish information if it exists in the request
+                        if (req.body.content) wish.content = req.body.content;
 
-                    // save the wish
-                    wish.save(function (err) {
-                        if (err) res.send(err);
+                        // save the wish
+                        wish.save(function (err) {
+                            if (err) res.send(err);
 
-                        // return a message
-                        res.json({success: true, message: 'Wish updated!'});
-                    });
+                            // return a message
+                            res.json({success: true, message: 'Wish updated!'});
+                        });
+                    } else {
+                        res.json({success: false, message: 'Private request roles required!'});
+                    }
                 });
 
             } else {
@@ -108,13 +112,21 @@ var apiPrivate = function(app, express) {
     apiRouter.route('/wishes/:wishId')
 
         .delete(function(req, res) {
-            Wish.remove({
-                _id: req.params.wishId
-            }, function(err, wish) {
-                if (err) res.send(err);
+            if (req.query.requester && req.query.requester == 'wishlistAdmin') {
+                Wish.remove({
+                    _id: req.params.wishId
+                }, function(err, wish) {
+                    if (err) res.send(err);
 
-                res.json({ success: true, message: 'Successfully deleted!', wish: wish });
-            });
+                    Rate.remove({wishId: req.params.wishId}, function(err, rate) {
+                        if (err) res.send(err);
+                    });
+
+                    res.json({ success: true, message: 'Successfully deleted!', wish: wish });
+                });
+            } else {
+                res.json({success: false, message: 'Private request roles required!'});
+            }
         });
 
     apiRouter.route('/wishes')
@@ -228,11 +240,11 @@ var apiPrivate = function(app, express) {
 
     // on routes that end in /users/:user_id
     // ----------------------------------------------------
-    apiRouter.route('/users/:user_id')
+    apiRouter.route('/users/:userId')
 
         // get the user with that id
         .get(function(req, res) {
-            User.findById(req.params.user_id, function(err, user) {
+            User.findById(req.params.userId, function(err, user) {
                 if (err) res.send(err);
                 if (req.query.requester && (req.query.requester == user.username || req.query.requester == 'wishlistAdmin')) {
                     // return that user
@@ -277,8 +289,8 @@ var apiPrivate = function(app, express) {
             });
         });
 
-    //delete rates by user_id and wish_id
-    apiRouter.route('/rates/:user_id/:wish_id')
+    //delete rates by userId and wishId
+    apiRouter.route('/rates/:userId/:wishId')
 
         .delete(function(req, res) {
             Rate.remove({ wishId: req.params.wishId, userId: req.params.userId }, function(err, rate) {
