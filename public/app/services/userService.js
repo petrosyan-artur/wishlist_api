@@ -11,8 +11,8 @@ angular.module('userService', [])
 	};
 
 	// get all users
-	userFactory.all = function(requester) {
-		return $http.get('/api/private/users?requester='+requester);
+	userFactory.all = function() {
+		return $http.get('/api/private/users');
 	};
 
 	// create a user
@@ -22,17 +22,17 @@ angular.module('userService', [])
 
     // get a single user
     userFactory.getByUsername = function(username) {
-        return $http.get('/api/private/users?username=' + username+'&requester='+username);
+        return $http.get('/api/private/users?username=' + username);
     };
 
     // get users like username
     userFactory.getLikeUsername = function(userData) {
-       return $http.get('/api/private/users?like=1&username=' + userData.username+'&requester='+userData.requester);
+       return $http.get('/api/private/users?like=1&username=' + userData.username);
     };
 
     // change user password
-    userFactory.changePassword = function(data, requester) {
-        return $http.put('/api/private/users?action=changePassword&requester='+requester, data);
+    userFactory.changePassword = function(data) {
+        return $http.put('/api/private/users?action=changePassword', data);
     };
 
 	// update a user

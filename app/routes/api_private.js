@@ -33,6 +33,7 @@ var apiPrivate = function(app, express) {
                     });
                 } else {
                     // if everything is good, save to request for use in other routes
+                    decoded.role = 1;
                     req.decoded = decoded;
 
                     next(); // make sure we go to the next routes and don't stop here
@@ -87,7 +88,7 @@ var apiPrivate = function(app, express) {
 
                     if (err) res.send(err);
 
-                    if (req.query.requester && (req.query.requester == 'wishlistAdmin' || req.query.requester == wish.username)) {
+                    if (req.decoded.username && (req.decoded.username == 'wishlistAdmin' || req.decoded.username == wish.username)) {
                         // set the wish information if it exists in the request
                         if (req.body.content) wish.content = req.body.content;
 
@@ -112,7 +113,7 @@ var apiPrivate = function(app, express) {
     apiRouter.route('/wishes/:wishId')
 
         .delete(function(req, res) {
-            if (req.query.requester && req.query.requester == 'wishlistAdmin') {
+            if (req.decoded.username && req.decoded.username == 'wishlistAdmin') {
                 Wish.remove({
                     _id: req.params.wishId
                 }, function(err, wish) {
@@ -151,7 +152,7 @@ var apiPrivate = function(app, express) {
 
         // get all the users or get userData by username(accessed at GET http://localhost:8080/api/users)
         .get(function (req, res) {
-            if (req.query.username && req.query.requester && (req.query.username == req.query.requester)) {
+            if (req.query.username && req.decoded.username && (req.query.username == req.decoded.username)) {
             //find user by username
                 User.find({username: req.query.username}, function (err, user) {
                     if (err) res.send(err);
@@ -161,7 +162,7 @@ var apiPrivate = function(app, express) {
                 return;
             }
 
-            if (req.query.requester && req.query.requester == 'wishlistAdmin') {
+            if (req.decoded.username && req.decoded.username == 'wishlistAdmin') {
             //find user like username
                 if (req.query.like && req.query.like == 1 && req.query.username) {
                     User.find({username: new RegExp(req.query.username, 'i')}).sort({_id: -1}).exec(function (err, users) {
@@ -182,7 +183,7 @@ var apiPrivate = function(app, express) {
 
         .put(function(req, res) {
 
-            if (req.query.requester && (req.query.requester == 'wishlistAdmin' || req.query.requester == req.body.username)) {
+            if (req.decoded.username && (req.decoded.username == 'wishlistAdmin' || req.decoded.username == req.body.username)) {
                 //change password
                 if (req.query.action == 'changePassword') {
 
@@ -246,7 +247,7 @@ var apiPrivate = function(app, express) {
         .get(function(req, res) {
             User.findById(req.params.userId, function(err, user) {
                 if (err) res.send(err);
-                if (req.query.requester && (req.query.requester == user.username || req.query.requester == 'wishlistAdmin')) {
+                if (req.decoded.username && (req.decoded.username == user.username || req.decoded.username == 'wishlistAdmin')) {
                     // return that user
                     res.json(user);
                 } else {
@@ -303,6 +304,11 @@ var apiPrivate = function(app, express) {
     // api endpoint to get user information
     apiRouter.get('/me', function(req, res) {
         res.send(req.decoded);
+    });
+
+    apiRouter.get('/test', function(req, res) {
+        var user = req.decoded;
+        res.send(user);
     });
 
 	return apiRouter;

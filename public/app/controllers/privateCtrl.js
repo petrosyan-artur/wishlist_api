@@ -202,7 +202,7 @@ angular.module('privateCtrl', ['privateService','userService', 'wishService'])
         };
         vm.deleteWish = function (wishId) {
             console.log(wishId);
-            Private.deleteWish(wishId, vm.admin)
+            Private.deleteWish(wishId)
                 .success(function(res){
                     console.log(res);
                     if(res.success == true) {

@@ -41,8 +41,8 @@ angular.module('wishService', [])
     };
 
     // update wish
-    wishFactory.updateWish = function(data, requester) {
-        return $http.put('/api/private/wishes?requester='+requester, data);
+    wishFactory.updateWish = function(data) {
+        return $http.put('/api/private/wishes', data);
     };
 
 	//// update a wish
