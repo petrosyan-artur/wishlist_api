@@ -23,7 +23,7 @@ module.exports = function(app, express) {
             username: req.body.username
         }).select('username password isActive').exec(function(err, user) {
 
-            if (err) throw err;
+            if (err) { return res.status(500).send({ success: false, message: err}); }
 
             // no user with that username was found
             if (!user) {
@@ -82,13 +82,9 @@ module.exports = function(app, express) {
             user.password = req.body.password;  // set the users password (comes from the request)
 
             user.save(function(err) {
-                if (err) {
-                    // duplicate entry
-                    if (err.code == 11000)
-                        return res.json({ success: false, message: 'A user with that username already exists. '});
-                    else
-                        return res.send(err);
-                }
+
+                if (err) { return res.json({ success: false, message: err}); }
+
                 //create a token
                 var token = jwt.sign({
                     name: user.name,
@@ -127,7 +123,7 @@ module.exports = function(app, express) {
             //wish loadMore case
             if (req.query.limit) {
                 Wish.find({isActive: true}).sort({_id:-1}).skip(req.query.limit-4).limit(4).exec(function(err, wishes) {
-                    if (err) res.send(err);
+                    if (err) { return res.status(500).send({ success: false, message: err}); }
                     res.json({wishes: wishes, limit: limit});
                 });
                 return;
@@ -135,7 +131,7 @@ module.exports = function(app, express) {
             //returns all active wishes count
             if (req.query.count && req.query.count == 1) {
                 Wish.count({isActive: true}, function(err, count) {
-                    if (err) res.send(err);
+                    if (err) { return res.status(500).send({ success: false, message: err}); }
                     if (!count) {
                         res.json({success: false, count: 0});
                     } else {
@@ -147,7 +143,7 @@ module.exports = function(app, express) {
             //returns 'limit' number of wishes (on main page)
             var limit = 12;
             Wish.find({isActive: true}).sort({_id:-1}).limit(limit).exec(function(err, wishes) {
-				if (err) res.send(err);
+                if (err) { return res.status(500).send({ success: false, message: err}); }
 
 				res.json(wishes);
 			});
@@ -158,7 +154,7 @@ module.exports = function(app, express) {
 
 		.get(function(req, res) {
 			Wish.findById(req.params.wish_id, function(err, wish) {
-				if (err) res.send(err);
+                if (err) { return res.status(500).send({ success: false, message: err}); }
 
 				res.json(wish);
 			});
@@ -169,7 +165,7 @@ module.exports = function(app, express) {
 
         .get(function(req, res) {
             Rate.count({wishId: req.params.wish_id}, function(err, rates) {
-                if (err) res.send(err);
+                if (err) { return res.status(500).send({ success: false, message: err}); }
                 if (!rates) {
                     res.json({success: false, rates: 0});
                 } else {
@@ -183,7 +179,7 @@ module.exports = function(app, express) {
 
         .get(function(req, res) {
             Configuration.find({}, function(err, configs) {
-                if (err) res.send(err);
+                if (err) { return res.status(500).send({ success: false, message: err}); }
                 if (!configs) {
                     res.json({success: false, configs: 0});
                 } else {

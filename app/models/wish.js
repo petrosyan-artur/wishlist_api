@@ -4,10 +4,10 @@ var Schema       = mongoose.Schema,
 
 // wish schema
 var WishSchema = new Schema({
-	    content: { type: String, required: true, index: { unique: true }},
+	    content: { type: String, required: true, index: true },
 	    createdDate: { type: String, required: true, select: true},
         userId: { type: ObjectId, required: true, select: true },
-        username: { type: String, required: true, select: true},
+        username: { type: String, required: true, select: true },
         isActive: { type: Boolean, required: true, select: true, default: true }
     },
     {

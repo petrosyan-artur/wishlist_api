@@ -66,13 +66,7 @@ var apiPrivate = function(app, express) {
             wish.username = req.body.username;  // set the wish owner name (comes from the request)
 
             wish.save(function(err, result) {
-                if (err) {
-                    // duplicate entry
-                    if (err.code == 11000)
-                        return res.json({ success: false, message: 'A wish with that content already exists. '});
-                    else
-                        return res.send(err);
-                }
+                if (err) { return res.status(500).send({ success: false, message: err}); }
                 // return a message
                 res.json({ success: true, message: 'Wish created!', data: result });
             });
@@ -86,7 +80,7 @@ var apiPrivate = function(app, express) {
 
                 Wish.findById(req.body.wishId, function (err, wish) {
 
-                    if (err) res.send(err);
+                    if (err) { return res.status(500).send({ success: false, message: err}); }
 
                     if (req.decoded.username && (req.decoded.username == 'wishlistAdmin' || req.decoded.username == wish.username)) {
                         // set the wish information if it exists in the request
@@ -94,7 +88,7 @@ var apiPrivate = function(app, express) {
 
                         // save the wish
                         wish.save(function (err) {
-                            if (err) res.send(err);
+                            if (err) { return res.status(500).send({ success: false, message: err}); }
 
                             // return a message
                             res.json({success: true, message: 'Wish updated!'});
@@ -117,10 +111,10 @@ var apiPrivate = function(app, express) {
                 Wish.remove({
                     _id: req.params.wishId
                 }, function(err, wish) {
-                    if (err) res.send(err);
+                    if (err) { return res.status(500).send({ success: false, message: err}); }
 
                     Rate.remove({wishId: req.params.wishId}, function(err, rate) {
-                        if (err) res.send(err);
+                        if (err) { return res.status(500).send({ success: false, message: err}); }
                     });
 
                     res.json({ success: true, message: 'Successfully deleted!', wish: wish });
@@ -137,10 +131,10 @@ var apiPrivate = function(app, express) {
                 var ObjectId = require('mongoose').Types.ObjectId;
                 var userId = new ObjectId(req.query.userId);
                 Wish.find({ userId: userId}).sort({_id:-1}).exec(function (err, wishes) {
-                    if (!wishes) {
-                        res.json({success: false});
+                    if (wishes.length == 0) {
+                        res.json({wishes: 0});
                     } else {
-                        res.json(wishes);
+                        res.json({wishes: wishes});
                     }
                 });
             }
@@ -155,7 +149,7 @@ var apiPrivate = function(app, express) {
             if (req.query.username && req.decoded.username && (req.query.username == req.decoded.username)) {
             //find user by username
                 User.find({username: req.query.username}, function (err, user) {
-                    if (err) res.send(err);
+                    if (err) { return res.status(500).send({ success: false, message: err}); }
                     // return that user
                     res.json(user);
                 });
@@ -172,7 +166,7 @@ var apiPrivate = function(app, express) {
                 }
             //find all users
                 User.find({}, function (err, users) {
-                    if (err) res.send(err);
+                    if (err) { return res.status(500).send({ success: false, message: err}); }
                     // return the users
                     res.json(users);
                 });
@@ -188,14 +182,14 @@ var apiPrivate = function(app, express) {
                 if (req.query.action == 'changePassword') {
 
                     if (!req.body.password || req.body.password == '') {
-                        return res.json({ success: false, message: 'Passwords is empty! '});
+                        return res.json({ success: false, message: 'Password is empty! '});
                     }
                     if (req.body.password != req.body.password2) {
                         return res.json({ success: false, message: 'Passwords Mismatch! '});
                     }
                     User.findById(req.body.userId, function(err, user) {
 
-                        if (err) res.send(err);
+                        if (err) { return res.status(500).send({ success: false, message: err}); }
 
                         if (!user) {
                             res.json({ success:false, message: 'Invalid User!' });
@@ -203,7 +197,7 @@ var apiPrivate = function(app, express) {
                         if (req.body.password) user.password = req.body.password;
 
                         user.save(function(err) {
-                            if (err) res.send(err);
+                            if (err) { return res.json({ success: false, message: err}); }
 
                             res.json({ success:true, message: 'Password is updated!' });
                         });
@@ -217,7 +211,7 @@ var apiPrivate = function(app, express) {
                     }
                     User.findById(req.body.userId, function(err, user) {
 
-                        if (err) res.send(err);
+                        if (err) { return res.status(500).send({ success: false, message: err}); }
 
                         if (!user) {
                             res.json({ success:false, message: 'Invalid User!' });
@@ -227,7 +221,7 @@ var apiPrivate = function(app, express) {
                         if (req.query.action == 'deactivate') {user.isActive = false; msg = 'User is deactivated successfully!';}
 
                         user.save(function(err) {
-                            if (err) res.send(err);
+                            if (err) { return res.status(500).send({ success: false, message: err}); }
 
                             res.json({ success:true, message: msg });
                         });
@@ -246,7 +240,7 @@ var apiPrivate = function(app, express) {
         // get the user with that id
         .get(function(req, res) {
             User.findById(req.params.userId, function(err, user) {
-                if (err) res.send(err);
+                if (err) { return res.status(500).send({ success: false, message: err}); }
                 if (req.decoded.username && (req.decoded.username == user.username || req.decoded.username == 'wishlistAdmin')) {
                     // return that user
                     res.json(user);
@@ -265,9 +259,7 @@ var apiPrivate = function(app, express) {
             rate.userId = req.body.userId;
 
             rate.save(function(err, result) {
-                if (err) {
-                    res.send(err);
-                }
+                if (err) { return res.status(500).send({ success: false, message: err}); }
                 // return a message
                 res.json({ success: true, message: 'Rated!', data: result });
             });
@@ -281,7 +273,7 @@ var apiPrivate = function(app, express) {
                 var wishId = req.query.wishId;
             }
             Rate.findOne({userId: userId, wishId: wishId}).exec(function(err, rate) {
-                if (err) res.send(err);
+                if (err) { return res.status(500).send({ success: false, message: err}); }
                 if (!rate) {
                     res.json({success:true, isRated: false});
                 } else {
@@ -295,7 +287,7 @@ var apiPrivate = function(app, express) {
 
         .delete(function(req, res) {
             Rate.remove({ wishId: req.params.wishId, userId: req.params.userId }, function(err, rate) {
-                if (err) res.send(err);
+                if (err) { return res.status(500).send({ success: false, message: err}); }
                 res.json({ success: true, message: 'Successfully deleted!', rate: rate });
             });
         });
