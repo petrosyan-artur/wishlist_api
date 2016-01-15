@@ -46,7 +46,10 @@ angular.module('privateCtrl', ['privateService','userService', 'wishService'])
 
         vm.findWish = function() {
             //vm.processing = true;
-
+            if (vm.findData === undefined) {
+                alert('Please write something to search');
+                return false;
+            }
             // use the create function in the wishService
             Wish.find(vm.findData.content)
                 .success(function(data) {
@@ -61,8 +64,8 @@ angular.module('privateCtrl', ['privateService','userService', 'wishService'])
 
         vm.userData = false;
         vm.findUser = function() {
-            console.log(vm.user);
-            if (!vm.user.username || vm.user.username == '') {
+
+            if (vm.user === undefined || !vm.user.username || vm.user.username == '') {
                 alert('Username is empty!');
                 return false;
             }

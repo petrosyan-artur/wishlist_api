@@ -31,6 +31,10 @@ angular.module('wishCtrl', ['wishService', 'userService', 'rateService'])
 
         // function to handle login form
         vm.doLogin = function () {
+            if (vm.loginData === undefined || vm.loginData.username === undefined || vm.loginData.password === undefined) {
+                vm.error = 'Empty inputs!';
+                return false;
+            }
             vm.processing = true;
 
             // clear the error
@@ -56,6 +60,10 @@ angular.module('wishCtrl', ['wishService', 'userService', 'rateService'])
 
         // function to handle register form
         vm.doRegister = function () {
+            if (vm.registerData === undefined || vm.registerData.username === undefined || vm.registerData.password === undefined || vm.registerData.password2 === undefined) {
+                vm.error = 'Empty inputs!';
+                return false;
+            }
             vm.processing = true;
 
             // clear the error
@@ -117,6 +125,10 @@ angular.module('wishCtrl', ['wishService', 'userService', 'rateService'])
                 alert('Please login to add a wish!');
                 return false;
             }
+            if (vm.wishData === undefined) {
+                alert('Empty wish cannot be submitted');
+                return false;
+            }
             var userId = document.getElementById('user_id').value;
             var username = document.getElementById('user_name').value;
             console.log(userId, username);
@@ -154,7 +166,10 @@ angular.module('wishCtrl', ['wishService', 'userService', 'rateService'])
         // function to find a wish like content
         vm.findWish = function() {
             //vm.processing = true;
-
+            if (vm.findData === undefined) {
+                alert('Please write something to search');
+                return false;
+            }
             // use the create function in the wishService
             Wish.find(vm.findData.content)
                 .success(function(data) {
