@@ -1,6 +1,7 @@
 var Wish       = require('../models/wish');
 var User       = require('../models/user');
 var Rate       = require('../models/rate');
+var Configuration     = require('../models/configuration');
 var jwt        = require('jsonwebtoken');
 var config     = require('../../config');
 var bodyParser = require('body-parser');
@@ -172,6 +173,20 @@ module.exports = function(app, express) {
                     res.json({success: false, rates: 0});
                 } else {
                     res.json({success: true, rates: rates});
+                }
+            });
+        });
+
+    //configuration routes
+    apiRouter.route('/configuration')
+
+        .get(function(req, res) {
+            Configuration.find({}, function(err, configs) {
+                if (err) res.send(err);
+                if (!configs) {
+                    res.json({success: false, configs: 0});
+                } else {
+                    res.json({success: true, configs: configs});
                 }
             });
         });
