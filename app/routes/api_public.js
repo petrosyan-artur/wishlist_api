@@ -6,6 +6,7 @@ var jwt        = require('jsonwebtoken');
 var config     = require('../../config');
 var bodyParser = require('body-parser');
 var rm         = require('../services/rateManager');
+var gm         = require('../services/globalManager');
 
 // super secret for creating tokens
 var superSecret = config.secret;
@@ -191,6 +192,18 @@ module.exports = function(app, express) {
             });
         });
 
+    //username generation route
+    apiRouter.route('/users')
+
+        .get(function(req, res) {
+            var username = gm.randomName();
+            User.findOne({ username: username }).exec(function(err, user) {
+               if (user) {
+                   username = gm.randomName();
+               }
+            });
+            res.json({success:true, username: username});
+        });
     //get test route
     apiRouter.route('/test')
 
