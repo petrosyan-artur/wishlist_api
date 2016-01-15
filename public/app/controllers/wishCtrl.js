@@ -18,11 +18,11 @@ angular.module('wishCtrl', ['wishService', 'userService', 'rateService'])
                     //console.log(data);
                     vm.user = data.data;
                     User.getByUsername(vm.user.username).success(function (data) {
-                        vm.userData = data[0];
+                        vm.userData = data.user[0];
                         Wish.findByUserId(vm.userData._id)
                             .success(function(data){
-                                if (data) {
-                                    vm.myWishes = data;
+                                if (data.success == true) {
+                                    vm.myWishes = data.wishes;
                                 }
                             });
                     })
@@ -92,7 +92,8 @@ angular.module('wishCtrl', ['wishService', 'userService', 'rateService'])
                 vm.processing = false;
 
                 // bind the wishes that come back to vm.wishes
-                vm.wishes = data;
+                console.log(data.wishes);
+                vm.wishes = data.wishes;
             });
 
         //get all wishes count
@@ -103,10 +104,12 @@ angular.module('wishCtrl', ['wishService', 'userService', 'rateService'])
                 });
         };
 
-        Wish.get($routeParams.wish_id)
-            .success(function(data) {
-                vm.singleWish = data.content;
-            });
+        //Wish.get($routeParams.wish_id)
+        //    .success(function(data) {
+        //        if (data.success == true) {
+        //            vm.singleWish = data.content;
+        //        }
+        //    });
 
         // function to add a wish
         vm.saveWish = function() {
@@ -156,8 +159,8 @@ angular.module('wishCtrl', ['wishService', 'userService', 'rateService'])
             Wish.find(vm.findData.content)
                 .success(function(data) {
                     vm.processing = false;
-                    vm.wishes = data;
-                    console.log(data);
+                    vm.wishes = data.wishes;
+                    console.log(data.wishes);
                     vm.wishData = {};
                     $('#loadMore').css('display', 'none');
                     //vm.message = data._id;

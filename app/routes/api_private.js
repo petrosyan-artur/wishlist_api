@@ -132,9 +132,9 @@ var apiPrivate = function(app, express) {
                 var userId = new ObjectId(req.query.userId);
                 Wish.find({ userId: userId}).sort({_id:-1}).exec(function (err, wishes) {
                     if (wishes.length == 0) {
-                        res.json({wishes: 0});
+                        res.json({success: false, wishes: 0});
                     } else {
-                        res.json({wishes: wishes});
+                        res.json({success: true, wishes: wishes});
                     }
                 });
             }
@@ -151,7 +151,7 @@ var apiPrivate = function(app, express) {
                 User.find({username: req.query.username}, function (err, user) {
                     if (err) { return res.status(500).send({ success: false, message: err}); }
                     // return that user
-                    res.json(user);
+                    res.json({success: true, user: user});
                 });
                 return;
             }
@@ -160,7 +160,7 @@ var apiPrivate = function(app, express) {
             //find user like username
                 if (req.query.like && req.query.like == 1 && req.query.username) {
                     User.find({username: new RegExp(req.query.username, 'i')}).sort({_id: -1}).exec(function (err, users) {
-                        res.json(users);
+                        res.json({successs: true, users:users});
                     });
                     return;
                 }
@@ -168,7 +168,7 @@ var apiPrivate = function(app, express) {
                 User.find({}, function (err, users) {
                     if (err) { return res.status(500).send({ success: false, message: err}); }
                     // return the users
-                    res.json(users);
+                    res.json({successs: true, users:users});
                 });
             } else {
                 res.json({success: false, message: 'Private request roles required!'})
@@ -243,7 +243,7 @@ var apiPrivate = function(app, express) {
                 if (err) { return res.status(500).send({ success: false, message: err}); }
                 if (req.decoded.username && (req.decoded.username == user.username || req.decoded.username == 'wishlistAdmin')) {
                     // return that user
-                    res.json(user);
+                    res.json({success: true, user: user});
                 } else {
                     res.json({success:false, message:'Private request roles required!'})
                 }

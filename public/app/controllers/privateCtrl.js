@@ -25,7 +25,7 @@ angular.module('privateCtrl', ['privateService','userService', 'wishService'])
                         //$location.path('/');
                     }
                     User.getByUsername(vm.user.username).success(function (data) {
-                        vm.userData = data[0];
+                        vm.userData = data.user[0];
                         //console.log(data[0]);
                     })
                 });
@@ -41,18 +41,27 @@ angular.module('privateCtrl', ['privateService','userService', 'wishService'])
 
         Wish.all()
             .success(function (data) {
-                vm.wishes = data;
+                vm.wishes = data.wishes;
             });
 
         vm.findWish = function() {
-            Wish.find(vm.findData)
+            //vm.processing = true;
+
+            // use the create function in the wishService
+            Wish.find(vm.findData.content)
                 .success(function(data) {
-                    vm.wishes = data;
+                    vm.processing = false;
+                    vm.wishes = data.wishes;
+                    console.log(data.wishes);
+                    vm.wishData = {};
                     $('#loadMore').css('display', 'none');
+                    //vm.message = data._id;
                 });
         };
+
         vm.userData = false;
         vm.findUser = function() {
+            console.log(vm.user);
             if (!vm.user.username || vm.user.username == '') {
                 alert('Username is empty!');
                 return false;
@@ -64,11 +73,11 @@ angular.module('privateCtrl', ['privateService','userService', 'wishService'])
                         alert('User not found');
                         return false;
                     } else {
-                        console.log(data);
-                        vm.userData = data;
-                        Wish.findByUserId(data[0]._id)
+                        console.log(data.users);
+                        vm.userData = data.users;
+                        Wish.findByUserId(data.users[0]._id)
                             .success(function(wishes) {
-                                vm.wishes = wishes;
+                                vm.wishes = wishes.wishes;
                                 $('#loadMore').css('display', 'none');
                             });
                     }
@@ -78,8 +87,8 @@ angular.module('privateCtrl', ['privateService','userService', 'wishService'])
         vm.getAllUsers = function() {
             User.all('wishlistAdmin')
                 .success(function(data){
-                    console.log(data);
-                    vm.userData = data;
+                    console.log(data.users);
+                    vm.userData = data.users;
                 });
         };
 

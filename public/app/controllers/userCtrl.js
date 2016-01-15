@@ -15,12 +15,12 @@ angular.module('userCtrl', ['wishService', 'userService', 'rateService'])
                 //console.log(data);
                 vm.user = data.data;
                 User.getByUsername(vm.user.username).success(function (data) {
-                    vm.userData = data[0];
+                    vm.userData = data.user[0];
                     //console.log(data[0]);
                     Wish.findByUserId(vm.userData._id)
                         .success(function(data){
                             if (data) {
-                                vm.myWishes = data;
+                                vm.myWishes = data.wishes;
                             }
                         });
                 })

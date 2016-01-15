@@ -83,7 +83,7 @@ module.exports = function(app, express) {
 
             user.save(function(err) {
 
-                if (err) { return res.json({ success: false, message: err}); }
+                if (err) { return res.status(500).send({ success: false, message: err}); }
 
                 //create a token
                 var token = jwt.sign({
@@ -115,8 +115,9 @@ module.exports = function(app, express) {
 		.get(function(req, res) {
             //wish search case
             if (req.query.content) {
-                Wish.find({ content: new RegExp(req.query.content, 'i')}).sort({_id:-1}).exec(function (err, docs) {
-                     res.json(docs);
+                Wish.find({ content: new RegExp(req.query.content, 'i')}).sort({_id:-1}).exec(function (err, wishes) {
+                    if (err) { return res.status(500).send({ success: false, message: err}); }
+                    res.json({success: true, wishes: wishes});
                 });
                 return;
             }
@@ -124,7 +125,7 @@ module.exports = function(app, express) {
             if (req.query.limit) {
                 Wish.find({isActive: true}).sort({_id:-1}).skip(req.query.limit-4).limit(4).exec(function(err, wishes) {
                     if (err) { return res.status(500).send({ success: false, message: err}); }
-                    res.json({wishes: wishes, limit: limit});
+                    res.json({success: true, wishes: wishes, limit: limit});
                 });
                 return;
             }
@@ -144,8 +145,7 @@ module.exports = function(app, express) {
             var limit = 12;
             Wish.find({isActive: true}).sort({_id:-1}).limit(limit).exec(function(err, wishes) {
                 if (err) { return res.status(500).send({ success: false, message: err}); }
-
-				res.json(wishes);
+				res.json({success: true, wishes: wishes});
 			});
 		});
 
@@ -156,7 +156,7 @@ module.exports = function(app, express) {
 			Wish.findById(req.params.wish_id, function(err, wish) {
                 if (err) { return res.status(500).send({ success: false, message: err}); }
 
-				res.json(wish);
+				res.json({success: true, wishes: wish});
 			});
 		});
 
