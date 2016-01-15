@@ -66,6 +66,7 @@ angular.module('privateCtrl', ['privateService','userService', 'wishService'])
         vm.findUser = function() {
 
             if (vm.user === undefined || !vm.user.username || vm.user.username == '') {
+                console.log(vm.user.username);
                 alert('Username is empty!');
                 return false;
             }
