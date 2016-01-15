@@ -83,7 +83,12 @@ module.exports = function(app, express) {
 
             user.save(function(err) {
 
-                if (err) { return res.status(500).send({ success: false, message: err}); }
+                if (err) {
+                    if (err.code == 11000) {
+                        return res.send({ success: false, message: "Username with such username already exists"});
+                    }
+                    return res.status(500).send({ success: false, message: err});
+                }
 
                 //create a token
                 var token = jwt.sign({

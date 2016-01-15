@@ -18,13 +18,16 @@ angular.module('wishCtrl', ['wishService', 'userService', 'rateService'])
                     //console.log(data);
                     vm.user = data.data;
                     User.getByUsername(vm.user.username).success(function (data) {
-                        vm.userData = data.user[0];
-                        Wish.findByUserId(vm.userData._id)
-                            .success(function(data){
-                                if (data.success == true) {
-                                    vm.myWishes = data.wishes;
-                                }
-                            });
+                        if (data.success == true) {
+                            vm.userData = data.user[0];
+                            Wish.findByUserId(vm.userData._id)
+                                .success(function(data){
+                                    if (data.success == true) {
+                                        vm.myWishes = data.wishes;
+                                    }
+                                });
+                        }
+
                     })
                 });
         });
@@ -74,7 +77,7 @@ angular.module('wishCtrl', ['wishService', 'userService', 'rateService'])
                     vm.processing = false;
 
                     // if a user successfully register and logged in, redirect to users page
-                    if (data.success) {
+                    if (data.success == true) {
                         vm.registerData = {};
                         $location.path('/');
                     } else {
@@ -100,7 +103,7 @@ angular.module('wishCtrl', ['wishService', 'userService', 'rateService'])
                 vm.processing = false;
 
                 // bind the wishes that come back to vm.wishes
-                console.log(data.wishes);
+                //console.log(data.wishes);
                 vm.wishes = data.wishes;
             });
 
@@ -175,7 +178,7 @@ angular.module('wishCtrl', ['wishService', 'userService', 'rateService'])
                 .success(function(data) {
                     vm.processing = false;
                     vm.wishes = data.wishes;
-                    console.log(data.wishes);
+                    //console.log(data.wishes);
                     vm.wishData = {};
                     $('#loadMore').css('display', 'none');
                     //vm.message = data._id;
