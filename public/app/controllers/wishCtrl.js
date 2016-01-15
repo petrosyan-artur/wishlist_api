@@ -128,7 +128,7 @@ angular.module('wishCtrl', ['wishService', 'userService', 'rateService'])
                 alert('Please login to add a wish!');
                 return false;
             }
-            if (vm.wishData === undefined) {
+            if (vm.wishData === undefined || vm.wishData.content === undefined || vm.wishData.content == '') {
                 alert('Empty wish cannot be submitted');
                 return false;
             }

@@ -85,7 +85,7 @@ module.exports = function(app, express) {
 
                 if (err) {
                     if (err.code == 11000) {
-                        return res.send({ success: false, message: "Username with such username already exists"});
+                        return res.send({ success: false, message: "User with such username already exists"});
                     }
                     return res.status(500).send({ success: false, message: err});
                 }
