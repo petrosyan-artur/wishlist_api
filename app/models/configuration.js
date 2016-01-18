@@ -4,8 +4,7 @@ var Schema       = mongoose.Schema,
 
 // configuration schema
 var ConfigurationSchema = new Schema({
-	    name: { type: String, required: true, select: true},
-        value: { type: String, required: true, select: true}
+	    configs: { type: Object, required: true, select: true}
     }
 );
 

@@ -118,10 +118,21 @@ module.exports = function(app, express) {
 
 		// get all the wishes (accessed at GET http://localhost:8080/api/wishes)
 		.get(function(req, res) {
+            var limit = 12;
+            var skip = 0;
+            var count = 12;
             //wish search case
             if (req.query.content) {
-                Wish.find({ content: new RegExp(req.query.content, 'i')}).sort({_id:-1}).exec(function (err, wishes) {
+                if (req.query.limit != 12 ) {
+                    limit = req.query.limit;
+                    skip = limit - 4;
+                    count = 4;
+                }
+                Wish.find({ content: new RegExp(req.query.content, 'i')}).skip(skip).limit(count).sort({_id:-1}).exec(function (err, wishes) {
                     if (err) { return res.status(500).send({ success: false, message: err}); }
+                    for(var i in wishes){
+                        wishes[i].rate =  wishes[i]._id;
+                    }
                     res.json({success: true, wishes: wishes});
                 });
                 return;
@@ -147,9 +158,9 @@ module.exports = function(app, express) {
                 return;
             }
             //returns 'limit' number of wishes (on main page)
-            var limit = 12;
             Wish.find({isActive: true}).sort({_id:-1}).limit(limit).exec(function(err, wishes) {
                 if (err) { return res.status(500).send({ success: false, message: err}); }
+
 				res.json({success: true, wishes: wishes});
 			});
 		});
@@ -183,12 +194,12 @@ module.exports = function(app, express) {
     apiRouter.route('/configuration')
 
         .get(function(req, res) {
-            Configuration.find({}, function(err, configs) {
+            Configuration.findOne({}, function(err, configs) {
                 if (err) { return res.status(500).send({ success: false, message: err}); }
                 if (!configs) {
                     res.json({success: false, configs: 0});
                 } else {
-                    res.json({success: true, configs: configs});
+                    res.json({success: true, configs: configs.configs});
                 }
             });
         });
