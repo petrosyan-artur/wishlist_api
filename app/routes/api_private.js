@@ -261,7 +261,10 @@ var apiPrivate = function(app, express) {
             rate.save(function(err, result) {
                 if (err) { return res.status(500).send({ success: false, message: err}); }
                 // return a message
-                res.json({ success: true, message: 'Rated!', data: result });
+                Wish.update({_id: req.body.wishId}, {$inc: { likes: 1 }}).exec(function(err, wish) {
+                    if (err) { return res.status(500).send({success: false, message: err}); }
+                    res.json({ success: true, message: 'Rated!', data: result });
+                });
             });
         })
 
@@ -288,7 +291,10 @@ var apiPrivate = function(app, express) {
         .delete(function(req, res) {
             Rate.remove({ wishId: req.params.wishId, userId: req.params.userId }, function(err, rate) {
                 if (err) { return res.status(500).send({ success: false, message: err}); }
-                res.json({ success: true, message: 'Successfully deleted!', rate: rate });
+                Wish.update({_id: req.params.wishId}, {$inc: { likes: -1 }}).exec(function(err, wish) {
+                    if (err) { return res.status(500).send({success: false, message: err}); }
+                    res.json({ success: true, message: 'Successfully deleted!', rate: rate });
+                });
             });
         });
 

@@ -7,6 +7,7 @@ var config     = require('../../config');
 var bodyParser = require('body-parser');
 var rm         = require('../services/rateManager');
 var gm         = require('../services/globalManager');
+var async      = require('async');
 
 // super secret for creating tokens
 var superSecret = config.secret;
@@ -128,11 +129,8 @@ module.exports = function(app, express) {
                     skip = limit - 4;
                     count = 4;
                 }
-                Wish.find({ content: new RegExp(req.query.content, 'i')}).skip(skip).limit(count).sort({_id:-1}).exec(function (err, wishes) {
+                Wish.find({ content: new RegExp(req.query.content, 'i')}).sort({_id:-1}).skip(skip).limit(count).exec(function (err, wishes) {
                     if (err) { return res.status(500).send({ success: false, message: err}); }
-                    for(var i in wishes){
-                        wishes[i].rate =  wishes[i]._id;
-                    }
                     res.json({success: true, wishes: wishes});
                 });
                 return;
@@ -141,7 +139,7 @@ module.exports = function(app, express) {
             if (req.query.limit) {
                 Wish.find({isActive: true}).sort({_id:-1}).skip(req.query.limit-4).limit(4).exec(function(err, wishes) {
                     if (err) { return res.status(500).send({ success: false, message: err}); }
-                    res.json({success: true, wishes: wishes, limit: limit});
+                    res.json({success: true, wishes: wishes});
                 });
                 return;
             }
@@ -158,10 +156,34 @@ module.exports = function(app, express) {
                 return;
             }
             //returns 'limit' number of wishes (on main page)
+
             Wish.find({isActive: true}).sort({_id:-1}).limit(limit).exec(function(err, wishes) {
                 if (err) { return res.status(500).send({ success: false, message: err}); }
-
-				res.json({success: true, wishes: wishes});
+                res.json({success: true, wishes: wishes});
+                //wishes = JSON.parse(JSON.stringify(wishes));
+                //var data = [];
+                //
+                //var pushDoc = function(item, callback) {
+                //    if(item) {
+                //        Rate.count({ wishId: item._id}, function(err, rate) {
+                //
+                //            if(rate != null) {
+                //                item.rate = rate;
+                //                data.push(item);
+                //                callback();
+                //            } else callback();
+                //        });
+                //    }
+                //};
+                //async.forEach(wishes, pushDoc, function(err) {
+                //   if (err) return err;
+                //    var response = {
+                //        success: true,
+                //        wishes: gm.sortBy(data, {prop: "_id", desc: true})
+                //    };
+                //    //response = rm.sortBy(response, {prop: "_id", desc: true});
+                //    res.send(response);
+                //});
 			});
 		});
 

@@ -8,6 +8,7 @@ var WishSchema = new Schema({
 	    createdDate: { type: String, required: true, select: true},
         userId: { type: ObjectId, required: true, select: true },
         username: { type: String, required: true, select: true },
+        likes: { type: Number, required: true, select: true, default: 0 },
         isActive: { type: Boolean, required: true, select: true, default: true }
     },
     {
