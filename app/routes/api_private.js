@@ -4,6 +4,9 @@ var Rate       = require('../models/rate');
 var jwt        = require('jsonwebtoken');
 var config     = require('../../config');
 var bodyParser = require('body-parser');
+var rm         = require('../services/rateManager');
+var gm         = require('../services/globalManager');
+var async      = require('async');
 
 // super secret for creating tokens
 var superSecret = config.secret;
@@ -33,10 +36,15 @@ var apiPrivate = function(app, express) {
                     });
                 } else {
                     // if everything is good, save to request for use in other routes
-                    decoded.role = 1;
-                    req.decoded = decoded;
+                    //req.decoded = decoded;
+                    User.findOne({username: decoded.username}, function(err, user){
+                        //if (err) {decoded.err = 1}
+                        decoded.userId = user._id;
+                        req.decoded = decoded;
+                        next();
+                    });
 
-                    next(); // make sure we go to the next routes and don't stop here
+                    //next(); // make sure we go to the next routes and don't stop here
                 }
             });
 
@@ -127,6 +135,7 @@ var apiPrivate = function(app, express) {
     apiRouter.route('/wishes')
     //get users' wishes
         .get(function(req, res) {
+            //search in adminpage case
             if (req.query.userId) {
                 var ObjectId = require('mongoose').Types.ObjectId;
                 var userId = new ObjectId(req.query.userId);
@@ -136,8 +145,63 @@ var apiPrivate = function(app, express) {
                     } else {
                         res.json({success: true, wishes: wishes});
                     }
+                    return;
                 });
+                return;
             }
+            //
+            var limit = 12;
+            var skip = 0;
+            var count = 12;
+            //wish search case
+            if (req.query.content) {
+                if (req.query.limit != 12 ) {
+                    limit = req.query.limit;
+                    skip = limit - 4;
+                    count = 4;
+                }
+                Wish.find({ content: new RegExp(req.query.content, 'i')}).sort({_id:-1}).skip(skip).limit(count).exec(function (err, wishes) {
+                    if (err) { return res.status(500).send({ success: false, message: err}); }
+                    rm.checkLiked(wishes, req.decoded.userId, function(err, data){
+                        if (err) { return res.status(500).send({ success: false, message: err}); }
+                        res.send(data);
+                    });
+                });
+                return;
+            }
+            //wish loadMore case
+            if (req.query.limit) {
+                Wish.find({isActive: true}).sort({_id:-1}).skip(req.query.limit-4).limit(4).exec(function(err, wishes) {
+                    if (err) { return res.status(500).send({ success: false, message: err}); }
+                    rm.checkLiked(wishes, req.decoded.userId, function(err, data){
+                        if (err) { return res.status(500).send({ success: false, message: err}); }
+                        res.send(data);
+                    });
+                });
+                return;
+            }
+            //returns all active wishes count
+            if (req.query.count && req.query.count == 1) {
+                Wish.count({isActive: true}, function(err, count) {
+                    if (err) { return res.status(500).send({ success: false, message: err}); }
+                    if (!count) {
+                        res.json({success: false, count: 0});
+                    } else {
+                        res.json({success: true, count: count});
+                    }
+                });
+                return;
+            }
+            //returns 'limit' number of wishes (on main page)
+
+            Wish.find({isActive: true}).sort({_id:-1}).limit(limit).exec(function(err, wishes) {
+                if (err) { return res.status(500).send({ success: false, message: err}); }
+                rm.checkLiked(wishes, req.decoded.userId, function(err, data){
+                    if (err) { return res.status(500).send({ success: false, message: err}); }
+                    res.send(data);
+                });
+            });
+            return;
         });
 
     // on routes that end in /users

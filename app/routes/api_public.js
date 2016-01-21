@@ -160,31 +160,8 @@ module.exports = function(app, express) {
             Wish.find({isActive: true}).sort({_id:-1}).limit(limit).exec(function(err, wishes) {
                 if (err) { return res.status(500).send({ success: false, message: err}); }
                 res.json({success: true, wishes: wishes});
-                //wishes = JSON.parse(JSON.stringify(wishes));
-                //var data = [];
-                //
-                //var pushDoc = function(item, callback) {
-                //    if(item) {
-                //        Rate.count({ wishId: item._id}, function(err, rate) {
-                //
-                //            if(rate != null) {
-                //                item.rate = rate;
-                //                data.push(item);
-                //                callback();
-                //            } else callback();
-                //        });
-                //    }
-                //};
-                //async.forEach(wishes, pushDoc, function(err) {
-                //   if (err) return err;
-                //    var response = {
-                //        success: true,
-                //        wishes: gm.sortBy(data, {prop: "_id", desc: true})
-                //    };
-                //    //response = rm.sortBy(response, {prop: "_id", desc: true});
-                //    res.send(response);
-                //});
 			});
+            return;
 		});
 
 	// get wish by wish_id
@@ -230,19 +207,19 @@ module.exports = function(app, express) {
     apiRouter.route('/users')
 
         .get(function(req, res) {
-            var username = gm.randomName();
-            User.findOne({ username: username }).exec(function(err, user) {
-               if (user) {
-                   username = gm.randomName();
-               }
+            var text = "Please make sure to remember your password and login, as it is not possible to recover it.";
+            gm.newUsername(function(err, username){
+                if (err) res.send(err);
+                res.json({success:true, username: username, hint: text});
             });
-            res.json({success:true, username: username});
         });
     //get test route
     apiRouter.route('/test')
 
         .get(function(req, res) {
-            res.json({ss:rm.sum(req)});
+            Wish.find({}, function(err, data){
+               res.json({result: data});
+            });
         });
 
 	return apiRouter;

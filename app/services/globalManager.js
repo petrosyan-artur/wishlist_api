@@ -1,6 +1,9 @@
 /**
  * Created by Knyazyan on 12/24/2015.
  */
+var Wish = require('../models/wish');
+var User = require('../models/user');
+
 var exports = module.exports = {};
 
 exports.randomName = function() {
@@ -12,6 +15,18 @@ exports.randomName = function() {
     text += a.toString().substring(0, 4);
 
     return text;
+};
+
+exports.newUsername = function(callback) {
+    var username = this.randomName();
+    User.findOne({ username: username }).exec(function(err, user) {
+        if (err) callback(err, null);
+        if (user) {
+            username = self.newUsername();
+        } else {
+            callback(null, username);
+        }
+    });
 };
 
 exports.sortBy = (function () {
@@ -47,3 +62,7 @@ exports.sortBy = (function () {
     };
 
 }());
+
+exports.testPromise = function() {
+    return Wish.find({isActive: true}).sort({_id:-1}).limit(12).exec();
+};

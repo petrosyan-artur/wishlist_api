@@ -2,6 +2,7 @@
  * Created by Knyazyan on 12/24/2015.
  */
 var Rate = require('../models/rate');
+var gm = require('../services/globalManager');
 var async = require('async');
 
 var exports = module.exports = {};
@@ -27,31 +28,34 @@ function getRates(wishId) {
     });
 }
 
-exports.rates = function(wishes) {
+exports.checkLiked = function(wishes, userId, callback) {
 
     wishes = JSON.parse(JSON.stringify(wishes));
-    return wishes;
     var data = [];
 
     var pushDoc = function(item, callback) {
         if(item) {
-            Rate.count({ wishId: item._id}, function(err, rate) {
+            Rate.findOne({ wishId: item._id, userId: userId}).exec(function(err, rate) {
 
-                if(rate != null) {
-                    item.rate = rate;
+                if(!rate) {
+                    item.liked = false;
                     data.push(item);
                     callback();
-                } else callback();
+                } else {
+                    item.liked = true;
+                    data.push(item);
+                    callback();
+                }
             });
         }
     };
     async.forEach(wishes, pushDoc, function(err) {
-        if (err) return err;
+        if (err) return callback(err, null);
         var response = {
             success: true,
-            wishes: data
+            wishes: gm.sortBy(data, {prop: "_id", desc: true})
         };
-        return response;
+        return callback(null, response);
     });
 
 };
