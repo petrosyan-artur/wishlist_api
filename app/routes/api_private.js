@@ -65,18 +65,24 @@ var apiPrivate = function(app, express) {
         // create a wish (accessed at POST http://localhost:8080/wishes)
         .post(function(req, res) {
             var d = new Date();
-            var date = d.getFullYear()+'-'+('0' + (d.getMonth() + 1)).slice(-2)+'-'+('0' + d.getDate()).slice(-2);
+            var date = d.getFullYear()+'-'+('0' + (d.getMonth() + 1)).slice(-2)+'-'+('0' + d.getDate()).slice(-2) +
+                ' '+ d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() ;
 
             var wish = new Wish();		// create a new instance of the Wish model
             wish.content = req.body.content;  // set the wish content (comes from the request)
             wish.createdDate = date;  // set the wish created date (comes from the request)
-            wish.userId = req.body.userId;  // set the wish owner id (comes from the request)
-            wish.username = req.body.username;  // set the wish owner name (comes from the request)
+            wish.userId = req.decoded.userId;  // set the wish owner id (is set in req.decoded)
+            wish.username = req.decoded.username;  // set the wish owner name (is set in req.decoded)
+            wish.decoration = {};
+            wish.decoration.color = 'rgb(197,202,233)';
+            wish.decoration.image = '';
+            if (req.body.color) { wish.decoration.color = req.body.color; }
+            if (req.body.image) { wish.decoration.image = req.body.image; }
 
             wish.save(function(err, result) {
                 if (err) { return res.status(500).send({ success: false, message: err}); }
                 // return a message
-                res.json({ success: true, message: 'Wish created!', data: result });
+                res.json({ success: true, message: 'Wish created!', wish: result });
             });
 
         })
