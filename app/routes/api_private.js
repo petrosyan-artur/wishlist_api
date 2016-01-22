@@ -6,7 +6,6 @@ var config     = require('../../config');
 var bodyParser = require('body-parser');
 var rm         = require('../services/rateManager');
 var gm         = require('../services/globalManager');
-var async      = require('async');
 
 // super secret for creating tokens
 var superSecret = config.secret;
@@ -18,7 +17,7 @@ var apiPrivate = function(app, express) {
     // route middleware to verify a token
     apiRouter.use(function(req, res, next) {
         // do logging
-        console.log('Somebody just came to our app!');
+        console.log('Somebody just came to our private app!');
 
         // check header or url parameters or post parameters for token
         var token = req.body.token || req.param('token') || req.headers['x-access-token'];
@@ -300,6 +299,24 @@ var apiPrivate = function(app, express) {
 
                     });
                 }
+
+                User.findById(req.decoded.userId, function(err, user) {
+
+                    if (err) { return res.status(500).send({ success: false, message: err}); }
+
+                    if (!user) {
+                        res.json({ success:false, message: 'Invalid User!' });
+                    }
+
+                    user.userAgent = req.userAgent;
+                    user.save(function(err) {
+                        if (err) { return res.status(500).send({ success: false, message: err}); }
+
+                        res.json({ success:true, message: 'Successfully set userAgent' });
+                    });
+
+                });
+
             } else {
                 res.json({ success:false, message: 'Private request roles required!' });
             }

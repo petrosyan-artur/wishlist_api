@@ -10,6 +10,7 @@ var UserSchema   = new Schema({
     name: String,
     username: { type: String, required: true, index: { unique: true }},
     password: { type: String, required: true, select: false },
+    userAgent: { type: Object, select: true },
     isActive: { type: Boolean, required: true, select: true, default: true }
 });
 

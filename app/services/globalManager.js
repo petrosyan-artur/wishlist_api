@@ -69,7 +69,7 @@ exports.parseUserAgent = function(userAgent) {
     result.device_type = values[0]; //iPhone, Android, iPad..
     result.device_os_version = values[1]; //
     result.device_name = values[2]; //Samsung Galaxy, LG...
-    result.app_version = values[3]; //1.0.2
+    result.app_version = values[3].replace(/\D/g,''); //1.0.2
 
     return result;
 };

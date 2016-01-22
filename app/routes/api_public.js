@@ -7,7 +7,7 @@ var config     = require('../../config');
 var bodyParser = require('body-parser');
 var rm         = require('../services/rateManager');
 var gm         = require('../services/globalManager');
-var async      = require('async');
+
 
 // super secret for creating tokens
 var superSecret = config.secret;
@@ -16,7 +16,19 @@ module.exports = function(app, express) {
 
 	var apiRouter = express.Router();
 
-    // route to authenticate a user (POST http://localhost:8080/api/authenticate)
+    // route middleware to get user-agent
+    apiRouter.use(function(req, res, next) {
+        // do logging
+        console.log('Somebody just came to our app!');
+
+        // check user-agent
+        var userAgent = req.headers['my-user-agent'];
+        req.userAgent = gm.parseUserAgent(userAgent);
+        next();
+    });
+
+
+        // route to authenticate a user (POST http://localhost:8080/api/authenticate)
     apiRouter.post('/authenticate', function(req, res) {
 
         // find the user
@@ -81,6 +93,7 @@ module.exports = function(app, express) {
             var user = new User();		// create a new instance of the User model
             user.username = req.body.username;  // set the users username (comes from the request)
             user.password = req.body.password;  // set the users password (comes from the request)
+            user.userAgent = req.userAgent;
 
             user.save(function(err) {
 
@@ -217,9 +230,7 @@ module.exports = function(app, express) {
     apiRouter.route('/test')
 
         .get(function(req, res) {
-            Wish.find({}, function(err, data){
-               res.json({result: data});
-            });
+            res.send(req.userAgent);
         });
 
 	return apiRouter;
