@@ -377,7 +377,7 @@ var apiPrivate = function(app, express) {
     });
 
     apiRouter.get('/test', function(req, res) {
-        var user = req.decoded;
+        var user = req.userAgent;
         res.send(user);
     });
 
