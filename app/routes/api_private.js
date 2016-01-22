@@ -21,8 +21,15 @@ var apiPrivate = function(app, express) {
 
         // check header or url parameters or post parameters for token
         var token = req.body.token || req.param('token') || req.headers['x-access-token'];
+
+        // check user-agent
         var userAgent = req.headers['my-user-agent'];
-        req.userAgent = gm.parseUserAgent(userAgent);
+        if (userAgent) {
+            req.userAgent = gm.parseUserAgent(userAgent);
+        } else {
+            req.userAgent = {};
+        }
+        next();
 
         // decode token
         if (token) {

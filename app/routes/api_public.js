@@ -23,7 +23,11 @@ module.exports = function(app, express) {
 
         // check user-agent
         var userAgent = req.headers['my-user-agent'];
-        req.userAgent = gm.parseUserAgent(userAgent);
+        if (userAgent) {
+            req.userAgent = gm.parseUserAgent(userAgent);
+        } else {
+            req.userAgent = {};
+        }
         next();
     });
 
