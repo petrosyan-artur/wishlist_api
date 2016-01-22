@@ -63,6 +63,13 @@ exports.sortBy = (function () {
 
 }());
 
-exports.testPromise = function() {
-    return Wish.find({isActive: true}).sort({_id:-1}).limit(12).exec();
+exports.parseUserAgent = function(userAgent) {
+    var values = userAgent.split(';');
+    var result = {};
+    result.device_type = values[0]; //iPhone, Android, iPad..
+    result.device_os_version = values[1]; //
+    result.device_name = values[2]; //Samsung Galaxy, LG...
+    result.app_version = values[3]; //1.0.2
+
+    return result;
 };
