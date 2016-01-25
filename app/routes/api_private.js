@@ -44,13 +44,14 @@ var apiPrivate = function(app, express) {
                     });
                 } else {
                     // if everything is good, save to request for use in other routes
-                    //req.decoded = decoded;
-                    User.findOne({username: decoded.username}, function(err, user){
-                        //if (err) {decoded.err = 1}
-                        decoded.userId = user._id;
-                        req.decoded = decoded;
-                        next();
-                    });
+                    req.decoded = decoded;
+                    next();
+                    //User.findOne({username: decoded.username}, function(err, user){
+                    //    //if (err) {decoded.err = 1}
+                    //    decoded.userId = user._id;
+                    //    req.decoded = decoded;
+                    //    next();
+                    //});
 
                     //next(); // make sure we go to the next routes and don't stop here
                 }
@@ -255,78 +256,97 @@ var apiPrivate = function(app, express) {
 
         .put(function(req, res) {
 
-            if (req.decoded.username && (req.decoded.username == 'wishlistAdmin' || req.decoded.username == req.body.username)) {
-                //change password
-                if (req.query.action == 'changePassword') {
+            if (req.decoded.username) {
 
-                    if (!req.body.password || req.body.password == '') {
-                        return res.json({ success: false, message: 'Password is empty! '});
-                    }
-                    if (req.body.password != req.body.password2) {
-                        return res.json({ success: false, message: 'Passwords Mismatch! '});
-                    }
-                    User.findById(req.body.userId, function(err, user) {
+                if (req.decoded.username == 'wishlistAdmin' || req.decoded.username == req.body.username) {
 
-                        if (err) { return res.status(500).send({ success: false, message: err}); }
+                    //change password
+                    if (req.query.action == 'changePassword') {
 
-                        if (!user) {
-                            res.json({ success:false, message: 'Invalid User!' });
+                        if (!req.body.password || req.body.password == '') {
+                            return res.json({success: false, message: 'Password is empty! '});
                         }
-                        if (req.body.password) user.password = req.body.password;
-
-                        user.save(function(err) {
-                            if (err) { return res.json({ success: false, message: err}); }
-
-                            res.json({ success:true, message: 'Password is updated!' });
-                        });
-
-                    });
-                }
-                //activate deactivate user
-                if (req.query.action == 'activate' || req.query.action == 'deactivate') {
-                    if (!req.body.userId) {
-                        return res.json({ success: false, message: 'Invalid userId!'});
-                    }
-                    User.findById(req.body.userId, function(err, user) {
-
-                        if (err) { return res.status(500).send({ success: false, message: err}); }
-
-                        if (!user) {
-                            res.json({ success:false, message: 'Invalid User!' });
+                        if (req.body.password != req.body.password2) {
+                            return res.json({success: false, message: 'Passwords Mismatch! '});
                         }
+                        User.findById(req.body.userId, function (err, user) {
 
-                        if (req.query.action == 'activate') {user.isActive = true; var msg = 'User is activated successfully!';}
-                        if (req.query.action == 'deactivate') {user.isActive = false; msg = 'User is deactivated successfully!';}
+                            if (err) {
+                                return res.status(500).send({success: false, message: err});
+                            }
 
-                        user.save(function(err) {
-                            if (err) { return res.status(500).send({ success: false, message: err}); }
+                            if (!user) {
+                                res.json({success: false, message: 'Invalid User!'});
+                            }
+                            if (req.body.password) user.password = req.body.password;
 
-                            res.json({ success:true, message: msg });
+                            user.save(function (err) {
+                                if (err) {
+                                    return res.json({success: false, message: err});
+                                }
+
+                                res.json({success: true, message: 'Password is updated!'});
+                            });
+
                         });
+                    }
+                    //activate deactivate user
+                    if (req.query.action == 'activate' || req.query.action == 'deactivate') {
+                        if (!req.body.userId) {
+                            return res.json({success: false, message: 'Invalid userId!'});
+                        }
+                        User.findById(req.body.userId, function (err, user) {
 
-                    });
+                            if (err) {
+                                return res.status(500).send({success: false, message: err});
+                            }
+
+                            if (!user) {
+                                res.json({success: false, message: 'Invalid User!'});
+                            }
+
+                            if (req.query.action == 'activate') {
+                                user.isActive = true;
+                                var msg = 'User is activated successfully!';
+                            }
+                            if (req.query.action == 'deactivate') {
+                                user.isActive = false;
+                                msg = 'User is deactivated successfully!';
+                            }
+
+                            user.save(function (err) {
+                                if (err) {
+                                    return res.status(500).send({success: false, message: err});
+                                }
+
+                                res.json({success: true, message: msg});
+                            });
+
+                        });
+                    }
+
+                } else {
+                    res.json({success: false, message: 'Private request roles required!'});
+                }
+            }
+
+            //seeting useragent
+            User.findById(req.decoded.userId, function(err, user) {
+
+                if (err) { return res.status(500).send({ success: false, message: err}); }
+
+                if (!user) {
+                    res.json({ success:false, message: 'Invalid User!' });
                 }
 
-                User.findById(req.decoded.userId, function(err, user) {
-
+                user.userAgent = req.userAgent;
+                user.save(function(err) {
                     if (err) { return res.status(500).send({ success: false, message: err}); }
 
-                    if (!user) {
-                        res.json({ success:false, message: 'Invalid User!' });
-                    }
-
-                    user.userAgent = req.userAgent;
-                    user.save(function(err) {
-                        if (err) { return res.status(500).send({ success: false, message: err}); }
-
-                        res.json({ success:true, message: 'Successfully set userAgent' });
-                    });
-
+                    res.json({ success:true, message: 'Successfully set userAgent' });
                 });
 
-            } else {
-                res.json({ success:false, message: 'Private request roles required!' });
-            }
+            });
         });
 
     // on routes that end in /users/:user_id
