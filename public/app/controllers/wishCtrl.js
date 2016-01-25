@@ -11,6 +11,7 @@ angular.module('wishCtrl', ['wishService', 'userService', 'rateService'])
         // check to see if a user is logged in on every request
         $rootScope.$on('$routeChangeStart', function () {
             vm.loggedIn = Auth.isLoggedIn();
+            console.log(vm.loggedIn);
 
             // get user information on page load
             Auth.getUser()

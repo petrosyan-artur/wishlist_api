@@ -29,7 +29,7 @@ var apiPrivate = function(app, express) {
         } else {
             req.userAgent = {};
         }
-        next();
+        //next();
 
         // decode token
         if (token) {
@@ -246,7 +246,7 @@ var apiPrivate = function(app, express) {
                 User.find({}, function (err, users) {
                     if (err) { return res.status(500).send({ success: false, message: err}); }
                     // return the users
-                    res.json({successs: true, users:users});
+                    res.json({success: true, users:users});
                 });
             } else {
                 res.json({success: false, message: 'Private request roles required!'})
