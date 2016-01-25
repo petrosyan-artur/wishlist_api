@@ -256,7 +256,7 @@ var apiPrivate = function(app, express) {
 
         .put(function(req, res) {
 
-            if (req.decoded.username && (req.decoded.username == 'wishlistAdmin' || req.decoded.username == req.body.username)) {
+            if (req.body.username && (req.decoded.username == 'wishlistAdmin' || req.decoded.username == req.body.username)) {
 
                 //change password
                 if (req.query.action == 'changePassword') {
@@ -285,8 +285,8 @@ var apiPrivate = function(app, express) {
 
                             res.json({success: true, message: 'Password is updated!'});
                         });
-
                     });
+                    return;
                 }
                 //activate deactivate user
                 if (req.query.action == 'activate' || req.query.action == 'deactivate') {
@@ -319,8 +319,8 @@ var apiPrivate = function(app, express) {
 
                             res.json({success: true, message: msg});
                         });
-
                     });
+                    return;
                 }
             }
 
