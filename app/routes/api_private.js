@@ -283,10 +283,9 @@ var apiPrivate = function(app, express) {
                                 return res.json({success: false, message: err});
                             }
 
-                            res.json({success: true, message: 'Password is updated!'});
+                            return res.json({success: true, message: 'Password is updated!'});
                         });
                     });
-                    return;
                 }
                 //activate deactivate user
                 if (req.query.action == 'activate' || req.query.action == 'deactivate') {
@@ -317,30 +316,24 @@ var apiPrivate = function(app, express) {
                                 return res.status(500).send({success: false, message: err});
                             }
 
-                            res.json({success: true, message: msg});
+                            return res.json({success: true, message: msg});
                         });
                     });
-                    return;
                 }
             }
 
             //seeting useragent
             User.findById(req.decoded.userId, function (err, user) {
 
-                if (err) {
-                    return res.status(500).send({success: false, message: err});
-                }
+                if (err) { return res.status(500).send({success: false, message: err}); }
 
-                if (!user) {
-                    res.json({success: false, message: 'Invalid User!'});
-                }
+                if (!user) { res.json({success: false, message: 'Invalid User!'}); }
 
                 user.userAgent = req.userAgent;
                 user.save(function (err) {
                     if (err) {
                         return res.status(500).send({success: false, message: err});
                     }
-
                     res.json({success: true, message: 'Successfully set userAgent'});
                 });
 
