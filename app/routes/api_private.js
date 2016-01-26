@@ -102,7 +102,7 @@ var apiPrivate = function(app, express) {
         //update a wish
         .put(function(req, res) {
 
-            if (req.body.wishId && req.body.content) {
+            if (req.body.wishId) {
 
                 Wish.findById(req.body.wishId, function (err, wish) {
 
@@ -111,13 +111,14 @@ var apiPrivate = function(app, express) {
                     if (req.decoded.username && (req.decoded.username == 'wishlistAdmin' || req.decoded.username == wish.username)) {
                         // set the wish information if it exists in the request
                         if (req.body.content) wish.content = req.body.content;
+                        if (req.body.decoration) wish.decoration = JSON.parse(req.body.decoration);
 
                         // save the wish
                         wish.save(function (err) {
                             if (err) { return res.send({ success: false, message: err}); }
 
                             // return a message
-                            res.json({success: true, message: 'Wish updated!'});
+                            res.json({success: true, message: 'Wish updated!', wish: wish});
                         });
                     } else {
                         res.json({success: false, message: 'Private request roles required!'});
