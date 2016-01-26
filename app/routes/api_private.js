@@ -83,10 +83,13 @@ var apiPrivate = function(app, express) {
             wish.userId = req.decoded.userId;  // set the wish owner id (is set in req.decoded)
             wish.username = req.decoded.username;  // set the wish owner name (is set in req.decoded)
             wish.decoration = {};
-            wish.decoration.color = 'rgb(197,202,233)';
+            wish.decoration.color = '197,202,233';
             wish.decoration.image = '';
-            if (req.body.color) { wish.decoration.color = req.body.color; }
-            if (req.body.image) { wish.decoration.image = req.body.image; }
+            if (req.body.decoration) {var decoration = JSON.parse(req.body.decoration);}
+            //res.json({content: req.body.content, decoration: req.body.decoration});
+            //return;
+            if (decoration && decoration.color) { wish.decoration.color = decoration.color; }
+            if (decoration && decoration.image) { wish.decoration.image = decoration; }
 
             wish.save(function(err, result) {
                 if (err) { return res.status(500).send({ success: false, message: err}); }
@@ -103,7 +106,7 @@ var apiPrivate = function(app, express) {
 
                 Wish.findById(req.body.wishId, function (err, wish) {
 
-                    if (err) { return res.status(500).send({ success: false, message: err}); }
+                    if (err) { return res.send({ success: false, message: err}); }
 
                     if (req.decoded.username && (req.decoded.username == 'wishlistAdmin' || req.decoded.username == wish.username)) {
                         // set the wish information if it exists in the request
@@ -111,7 +114,7 @@ var apiPrivate = function(app, express) {
 
                         // save the wish
                         wish.save(function (err) {
-                            if (err) { return res.status(500).send({ success: false, message: err}); }
+                            if (err) { return res.send({ success: false, message: err}); }
 
                             // return a message
                             res.json({success: true, message: 'Wish updated!'});
@@ -138,9 +141,10 @@ var apiPrivate = function(app, express) {
 
                     Rate.remove({wishId: req.params.wishId}, function(err, rate) {
                         if (err) { return res.status(500).send({ success: false, message: err}); }
+                        res.json({ success: true, message: 'Successfully deleted!', wish: wish });
                     });
 
-                    res.json({ success: true, message: 'Successfully deleted!', wish: wish });
+                    //res.json({ success: true, message: 'Successfully deleted!', wish: wish });
                 });
             } else {
                 res.json({success: false, message: 'Private request roles required!'});

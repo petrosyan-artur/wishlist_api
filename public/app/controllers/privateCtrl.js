@@ -207,6 +207,7 @@ angular.module('privateCtrl', ['privateService','userService', 'wishService'])
                         alert('The wish is successfully updated!');
                         return false;
                     } else {
+                        console.log(res.message);
                         alert('Something went wrong!');
                         return false;
                     }
@@ -220,7 +221,8 @@ angular.module('privateCtrl', ['privateService','userService', 'wishService'])
                     if(res.success == true) {
                         Wish.all()
                             .success(function (data) {
-                                vm.wishes = data;
+                                vm.wishes = data.wishes;
+                                console.log(data);
                             });
                         alert('The wish is successfully deleted!');
                     } else {
