@@ -10,7 +10,7 @@ var UserSchema   = new Schema({
     name: String,
     username: { type: String, required: true, index: { unique: true }},
     password: { type: String, required: true, select: false },
-    userAgent: { type: Object, select: true },
+    userAgent: { type: Object, select: true, default: {device_type: "web"} },
     isActive: { type: Boolean, required: true, select: true, default: true }
 });
 

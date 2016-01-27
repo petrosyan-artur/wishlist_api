@@ -29,7 +29,6 @@ var apiPrivate = function(app, express) {
         } else {
             req.userAgent = {};
         }
-        //next();
 
         // decode token
         if (token) {
@@ -46,14 +45,6 @@ var apiPrivate = function(app, express) {
                     // if everything is good, save to request for use in other routes
                     req.decoded = decoded;
                     next();
-                    //User.findOne({username: decoded.username}, function(err, user){
-                    //    //if (err) {decoded.err = 1}
-                    //    decoded.userId = user._id;
-                    //    req.decoded = decoded;
-                    //    next();
-                    //});
-
-                    //next(); // make sure we go to the next routes and don't stop here
                 }
             });
 

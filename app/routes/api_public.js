@@ -97,7 +97,7 @@ module.exports = function(app, express) {
             var user = new User();		// create a new instance of the User model
             user.username = req.body.username;  // set the users username (comes from the request)
             user.password = req.body.password;  // set the users password (comes from the request)
-            user.userAgent = req.userAgent;
+            if (JSON.stringify(req.userAgent) != '{}') {user.userAgent = req.userAgent;}
 
             user.save(function(err) {
 
