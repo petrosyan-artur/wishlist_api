@@ -90,15 +90,17 @@ var apiPrivate = function(app, express) {
         .put(function(req, res) {
 
             if (req.body._id) {
-
+                //res.send(req.body._id);
+                //return;
                 Wish.findById(req.body._id, function (err, wish) {
 
                     if (err) { return res.status(500).send({ success: false, message: err}); }
+                    if (wish == null) {return res.send({ success: false, message: "Invalid wishId", wish: wish});}
 
                     if (req.decoded.username && (req.decoded.username == 'wishlistAdmin' || req.decoded.username == wish.username)) {
                         // set the wish information if it exists in the request
                         if (req.body.content) wish.content = req.body.content;
-                        if (req.body.decoration) wish.decoration = JSON.parse(req.body.decoration);
+                        if (req.body.decoration) wish.decoration = req.body.decoration;
 
                         // save the wish
                         wish.save(function (err) {
