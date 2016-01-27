@@ -65,7 +65,7 @@ angular.module('userCtrl', ['wishService', 'userService', 'rateService'])
                 return false;
             }
             var data = {};
-            data.wishId = wishId;
+            data._id = wishId;
             data.content = content;
             Rate.getRate(wishId)
                 .success(function(result) {
@@ -87,5 +87,24 @@ angular.module('userCtrl', ['wishService', 'userService', 'rateService'])
                         return false;
                     }
                 });
+        };
+        vm.deleteWish = function (wishId) {
+            var username = $('#user_name').val();
+            Wish.deleteWish(wishId, username)
+                .success(function(res){
+                    console.log(res);
+                    if(res.success == true) {
+                        Wish.findByUserId(vm.userData._id)
+                            .success(function(data){
+                                if (data) {
+                                    vm.myWishes = data.wishes;
+                                }
+                            });
+                        alert('The wish is successfully deleted!');
+                    } else {
+                        alert(res.message);
+                        return false;
+                    }
+                })
         };
     });

@@ -146,9 +146,9 @@ angular.module('wishCtrl', ['wishService', 'userService', 'rateService'])
                 .success(function(data) {
                     vm.processing = false;
                     vm.wishes.unshift({
-                        _id: data.data._id,
-                        content: data.data.content,
-                        createdDate: data.data.createdDate
+                        _id: data.wish._id,
+                        content: data.wish.content,
+                        createdDate: data.wish.createdDate
                     });
                     console.log(data);
                     vm.wishData = {};

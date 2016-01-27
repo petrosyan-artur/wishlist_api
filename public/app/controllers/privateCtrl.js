@@ -199,7 +199,7 @@ angular.module('privateCtrl', ['privateService','userService', 'wishService'])
                 return false;
             }
             var data = {};
-            data.wishId = wishId;
+            data._id = wishId;
             data.content = content;
             Private.updateWish(data)
                 .success(function(res){

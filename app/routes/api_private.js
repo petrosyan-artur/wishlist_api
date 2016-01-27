@@ -86,7 +86,7 @@ var apiPrivate = function(app, express) {
             wish.decoration.color = '197,202,233';
             wish.decoration.image = '';
             if (req.body.decoration) wish.decoration = JSON.parse(req.body.decoration);
-            
+
             wish.save(function(err, result) {
                 if (err) { return res.status(500).send({ success: false, message: err}); }
                 // return a message
@@ -98,11 +98,11 @@ var apiPrivate = function(app, express) {
         //update a wish
         .put(function(req, res) {
 
-            if (req.body.wishId) {
+            if (req.body._id) {
 
-                Wish.findById(req.body.wishId, function (err, wish) {
+                Wish.findById(req.body._id, function (err, wish) {
 
-                    if (err) { return res.send({ success: false, message: err}); }
+                    if (err) { return res.status(500).send({ success: false, message: err}); }
 
                     if (req.decoded.username && (req.decoded.username == 'wishlistAdmin' || req.decoded.username == wish.username)) {
                         // set the wish information if it exists in the request
@@ -130,18 +130,29 @@ var apiPrivate = function(app, express) {
     apiRouter.route('/wishes/:wishId')
 
         .delete(function(req, res) {
-            if (req.decoded.username && req.decoded.username == 'wishlistAdmin') {
-                Wish.remove({
-                    _id: req.params.wishId
-                }, function(err, wish) {
-                    if (err) { return res.status(500).send({ success: false, message: err}); }
+            if (req.decoded.username == 'wishlistAdmin' || (req.query.username && req.query.username == req.decoded.username)) {
+                Wish.findById(req.params.wishId, function (err, wish) {
+                    if (err) {
+                        return res.status(500).send({success: false, message: err});
+                    }
+                    if (wish.likes != 0 && req.query.username) {
+                        return res.send({"success": false, "message": "The wish is liked and cannot be removed!"});
+                    } else {
+                        Wish.remove({
+                            _id: req.params.wishId
+                        }, function (err, wish) {
+                            if (err) {
+                                return res.status(500).send({success: false, message: err});
+                            }
 
-                    Rate.remove({wishId: req.params.wishId}, function(err, rate) {
-                        if (err) { return res.status(500).send({ success: false, message: err}); }
-                        res.json({ success: true, message: 'Successfully deleted!', wish: wish });
-                    });
-
-                    //res.json({ success: true, message: 'Successfully deleted!', wish: wish });
+                            Rate.remove({wishId: req.params.wishId}, function (err, rate) {
+                                if (err) {
+                                    return res.status(500).send({success: false, message: err});
+                                }
+                                res.json({success: true, message: 'Successfully deleted!', wish: wish});
+                            });
+                        });
+                    }
                 });
             } else {
                 res.json({success: false, message: 'Private request roles required!'});
@@ -323,7 +334,7 @@ var apiPrivate = function(app, express) {
                 }
             }
 
-            //seeting useragent
+            //setting useragent
             User.findById(req.decoded.userId, function (err, user) {
 
                 if (err) { return res.status(500).send({success: false, message: err}); }

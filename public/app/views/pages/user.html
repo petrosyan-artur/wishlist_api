@@ -47,9 +47,9 @@
             <td>{{ w.createdDate }}</td>
             <td><input type="text" value="{{ w.content }}" id="{{ w._id }}_content" style="width: 300px;padding:2px 6px; border:1px solid black;"></td>
             <td>{{ w.username }}</td>
-            <td class="col-sm-1">
+            <td class="col-sm-2">
                 <a href="#" ng-click="user.updateWish(w._id)" class="btn btn-primary">Update</a>
-                <!--<a href="#" ng-click="private.deleteWish(w._id)" class="btn btn-danger">Delete</a>-->
+                <a href="#" ng-click="user.deleteWish(w._id)" class="btn btn-danger">Delete</a>
             </td>
         </tr>
         </tbody>

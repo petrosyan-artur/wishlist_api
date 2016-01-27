@@ -45,6 +45,11 @@ angular.module('wishService', [])
         return $http.put('/api/private/wishes', data);
     };
 
+    // delete wish
+    wishFactory.deleteWish = function(id, username) {
+        return $http.delete('/api/private/wishes/' + id + '/?username=' + username);
+    };
+
 	//// update a wish
 	//wishFactory.update = function(id, wishData) {
 	//	return $http.put('/api/wishes/' + id, wishData);
