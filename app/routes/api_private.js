@@ -85,7 +85,7 @@ var apiPrivate = function(app, express) {
             wish.decoration = {};
             wish.decoration.color = '197,202,233';
             wish.decoration.image = '';
-            if (req.body.decoration) wish.decoration = JSON.parse(req.body.decoration);
+            if (req.body.decoration) wish.decoration = req.body.decoration;
 
             wish.save(function(err, result) {
                 if (err) { return res.status(500).send({ success: false, message: err}); }
