@@ -128,6 +128,7 @@ var apiPrivate = function(app, express) {
                     if (err) {
                         return res.status(500).send({success: false, message: err});
                     }
+                    if (wish == null) {return res.send({ success: false, message: "Invalid wishId", wish: wish});}
                     if (wish.likes != 0 && req.query.username) {
                         return res.send({"success": false, "message": "The wish is liked and cannot be removed!"});
                     } else {
@@ -278,7 +279,7 @@ var apiPrivate = function(app, express) {
                             return res.status(500).send({success: false, message: err});
                         }
 
-                        if (!user) {
+                        if (!user || user == null) {
                             res.json({success: false, message: 'Invalid User!'});
                         }
                         if (req.body.password) user.password = req.body.password;
@@ -302,7 +303,7 @@ var apiPrivate = function(app, express) {
                             return res.status(500).send({success: false, message: err});
                         }
 
-                        if (!user) {
+                        if (!user || user == null) {
                             res.json({success: false, message: 'Invalid User!'});
                         }
 
@@ -332,7 +333,7 @@ var apiPrivate = function(app, express) {
 
                 if (err) { return res.status(500).send({success: false, message: err}); }
 
-                if (!user) { res.json({success: false, message: 'Invalid User!'}); }
+                if (!user || user == null) { res.json({success: false, message: 'Invalid User!'}); }
 
                 user.userAgent = req.userAgent;
                 user.save(function (err) {
