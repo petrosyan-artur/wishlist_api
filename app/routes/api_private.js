@@ -6,6 +6,7 @@ var config     = require('../../config');
 var bodyParser = require('body-parser');
 var rm         = require('../services/rateManager');
 var gm         = require('../services/globalManager');
+var ObjectId   = require('mongoose').Types.ObjectId;
 
 // super secret for creating tokens
 var superSecret = config.secret;
@@ -157,8 +158,7 @@ var apiPrivate = function(app, express) {
     //get users' wishes
         .get(function(req, res) {
             //search in adminpage case
-            if (req.query.userId) {
-                var ObjectId = require('mongoose').Types.ObjectId;
+            if (req.query.userId && req.decoded.username == "wishlistAdmin") {
                 var userId = new ObjectId(req.query.userId);
                 Wish.find({ userId: userId}).sort({_id:-1}).exec(function (err, wishes) {
                     if (wishes.length == 0) {
@@ -166,41 +166,10 @@ var apiPrivate = function(app, express) {
                     } else {
                         res.json({success: true, wishes: wishes});
                     }
-                    return;
                 });
                 return;
             }
-            //
-            var limit = 12;
-            var skip = 0;
-            var count = 12;
-            //wish search case
-            if (req.query.content) {
-                if (req.query.limit != 12 ) {
-                    limit = req.query.limit;
-                    skip = limit - 4;
-                    count = 4;
-                }
-                Wish.find({ content: new RegExp(req.query.content, 'i')}).sort({_id:-1}).skip(skip).limit(count).exec(function (err, wishes) {
-                    if (err) { return res.status(500).send({ success: false, message: err}); }
-                    rm.checkLiked(wishes, req.decoded.userId, function(err, data){
-                        if (err) { return res.status(500).send({ success: false, message: err}); }
-                        res.send(data);
-                    });
-                });
-                return;
-            }
-            //wish loadMore case
-            if (req.query.limit) {
-                Wish.find({isActive: true}).sort({_id:-1}).skip(req.query.limit-4).limit(4).exec(function(err, wishes) {
-                    if (err) { return res.status(500).send({ success: false, message: err}); }
-                    rm.checkLiked(wishes, req.decoded.userId, function(err, data){
-                        if (err) { return res.status(500).send({ success: false, message: err}); }
-                        res.send(data);
-                    });
-                });
-                return;
-            }
+
             //returns all active wishes count
             if (req.query.count && req.query.count == 1) {
                 Wish.count({isActive: true}, function(err, count) {
@@ -213,16 +182,55 @@ var apiPrivate = function(app, express) {
                 });
                 return;
             }
-            //returns 'limit' number of wishes (on main page)
 
-            Wish.find({isActive: true}).sort({_id:-1}).limit(limit).exec(function(err, wishes) {
+            //
+            var skip = 0;
+            var count = 12;
+            var next = 4;
+            if (req.query.limit && req.query.limit != 12 && req.query.limit > next) {
+                skip = req.query.limit - next;
+                count = next;
+            }
+            //wish search case
+            if (req.query.content) {
+                Wish.find({ content: new RegExp(req.query.content, 'i')}).sort({_id:-1}).skip(skip).limit(count).exec(function (err, wishes) {
+                    if (err) { return res.status(500).send({ success: false, message: err}); }
+                    rm.checkLiked(wishes, req.decoded.userId, function(err, data){
+                        if (err) { return res.status(500).send({ success: false, message: err}); }
+                        res.send(data);
+                    });
+                });
+                return;
+            }
+
+            //get wishes liked by user
+            if (req.query.userId) {
+                Rate.find({userId: req.query.userId}).exec(function(err, rates) {
+                    if (err) { return res.status(500).send({ success: false, message: err}); }
+                    if (rates.length == 0) {
+                        res.json({success:true, wishes: []});
+                    } else {
+                        var idList = [];
+                        rates.forEach(function(r){
+                            idList.push(new ObjectId(r.wishId));
+                        });
+                        Wish.find({_id:{$in:idList}}).sort({_id:-1}).skip(skip).limit(count).exec(function(err, wishes) {
+                            if (err) { return res.status(500).send({ success: false, message: err}); }
+                            res.json({success: true, wishes: wishes});
+                        });
+                    }
+                });
+                return;
+            }
+
+            //returns 'count' number of wishes and skips 'skip'
+            Wish.find({isActive: true}).sort({_id:-1}).skip(skip).limit(count).exec(function(err, wishes) {
                 if (err) { return res.status(500).send({ success: false, message: err}); }
                 rm.checkLiked(wishes, req.decoded.userId, function(err, data){
                     if (err) { return res.status(500).send({ success: false, message: err}); }
                     res.send(data);
                 });
             });
-            return;
         });
 
     // on routes that end in /users
