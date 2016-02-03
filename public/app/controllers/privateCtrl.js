@@ -161,7 +161,7 @@ angular.module('privateCtrl', ['privateService','userService', 'wishService'])
         vm.loadMoreWish = function() {
             vm.loadMore = false;
             var limit = document.getElementById('loadLimit').value;
-            limit = parseInt(limit) + 4;
+            limit = parseInt(limit);
 
             Wish.loadMore(limit)
                 .success(function(data) {
@@ -182,7 +182,7 @@ angular.module('privateCtrl', ['privateService','userService', 'wishService'])
                         });
                     console.log(vm.wishesCount);
 
-                    if (vm.wishesCount <= limit) {
+                    if (vm.wishesCount <= limit + 4) {
                         vm.loadMore = true;
                     } else {
                         document.getElementById('loadLimit').value = limit;

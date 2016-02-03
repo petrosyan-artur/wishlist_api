@@ -209,7 +209,7 @@ angular.module('wishCtrl', ['wishService', 'userService', 'rateService'])
                         });
                     console.log(vm.wishesCount);
 
-                    if (vm.wishesCount <= limit) {
+                    if (vm.wishesCount <= limit + 4) {
                         vm.loadMore = true;
                     } else {
                         document.getElementById('loadLimit').value = limit;
