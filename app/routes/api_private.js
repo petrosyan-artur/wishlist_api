@@ -67,7 +67,7 @@ var apiPrivate = function(app, express) {
         .post(function(req, res) {
             var d = new Date();
             var date = d.getFullYear()+'-'+('0' + (d.getMonth() + 1)).slice(-2)+'-'+('0' + d.getDate()).slice(-2) +
-                ' '+ d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() ;
+                ' '+ ('0' + d.getHours()).slice(-2) + ":" + ('0' + d.getMinutes()).slice(-2) + ":" + ('0' + d.getSeconds()).slice(-2) ;
 
             var wish = new Wish();		// create a new instance of the Wish model
             wish.content = req.body.content;  // set the wish content (comes from the request)
@@ -170,6 +170,20 @@ var apiPrivate = function(app, express) {
                 return;
             }
 
+            //checking new wishes
+            if (req.query.wishId && req.query.count && req.query.count == 1) {
+                var wishId = new ObjectId(req.query.wishId);
+                Wish.count({_id: {$gt: wishId}}, function(err, count) {
+                    if (err) { return res.status(500).send({ success: false, message: err}); }
+                    if (!count || count == null) {
+                        res.json({success: true, hasNew: false});
+                    } else {
+                        res.json({success: true, hasNew: true, count: count});
+                    }
+                });
+                return;
+            }
+
             //returns all active wishes count
             if (req.query.count && req.query.count == 1) {
                 Wish.count({isActive: true}, function(err, count) {
@@ -187,13 +201,13 @@ var apiPrivate = function(app, express) {
             var skip = 0;
             var count = 12;
             var next = 4;
-            if (req.query.limit && req.query.limit != 12 && req.query.limit > next) {
-                skip = req.query.limit - next;
+            if (req.query.limit && req.query.limit != 0) {
+                skip = req.query.limit;
                 count = next;
             }
             //wish search case
             if (req.query.content) {
-                Wish.find({ content: new RegExp(req.query.content, 'i')}).sort({_id:-1}).skip(skip).limit(count).exec(function (err, wishes) {
+                Wish.find({ content: new RegExp(req.query.content, 'i'), isActive: true}).sort({_id:-1}).skip(skip).limit(count).exec(function (err, wishes) {
                     if (err) { return res.status(500).send({ success: false, message: err}); }
                     rm.checkLiked(wishes, req.decoded.userId, function(err, data){
                         if (err) { return res.status(500).send({ success: false, message: err}); }
@@ -219,6 +233,19 @@ var apiPrivate = function(app, express) {
                             res.json({success: true, wishes: wishes});
                         });
                     }
+                });
+                return;
+            }
+
+            //returns wishes newer than wishId
+            if (req.query.wishId) {
+                wishId = new ObjectId(req.query.wishId);
+                Wish.find({_id: {$gt: wishId}}).sort({_id:-1}).skip(skip).limit(count).exec(function(err, wishes) {
+                    if (err) { return res.status(500).send({ success: false, message: err}); }
+                    rm.checkLiked(wishes, req.decoded.userId, function(err, data){
+                        if (err) { return res.status(500).send({ success: false, message: err}); }
+                        res.send(data);
+                    });
                 });
                 return;
             }

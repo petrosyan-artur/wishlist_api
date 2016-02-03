@@ -7,7 +7,7 @@ var config     = require('../../config');
 var bodyParser = require('body-parser');
 var rm         = require('../services/rateManager');
 var gm         = require('../services/globalManager');
-
+var ObjectId   = require('mongoose').Types.ObjectId;
 
 // super secret for creating tokens
 var superSecret = config.secret;
@@ -137,6 +137,20 @@ module.exports = function(app, express) {
 		// get all the wishes (accessed at GET http://localhost:8080/api/wishes)
 		.get(function(req, res) {
 
+            //checking new wishes
+            if (req.query.wishId && req.query.count && req.query.count == 1) {
+                var wishId = new ObjectId(req.query.wishId);
+                Wish.count({_id: {$gt: wishId}}, function(err, count) {
+                    if (err) { return res.status(500).send({ success: false, message: err}); }
+                    if (!count || count == null) {
+                        res.json({success: true, hasNew: false});
+                    } else {
+                        res.json({success: true, hasNew: true, count: count});
+                    }
+                });
+                return;
+            }
+
             //returns all active wishes count
             if (req.query.count && req.query.count == 1) {
                 Wish.count({isActive: true}, function(err, count) {
@@ -153,13 +167,23 @@ module.exports = function(app, express) {
             var skip = 0;
             var count = 12;
             var next = 4;
-            if (req.query.limit && req.query.limit != 12 && req.query.limit > next) {
-                skip = req.query.limit - next;
+            if (req.query.limit && req.query.limit != 0) {
+                skip = req.query.limit;
                 count = next;
             }
             //wish search case
             if (req.query.content) {
-                Wish.find({ content: new RegExp(req.query.content, 'i')}).sort({_id:-1}).skip(skip).limit(count).exec(function (err, wishes) {
+                Wish.find({ content: new RegExp(req.query.content, 'i'), isActive: true}).sort({_id:-1}).skip(skip).limit(count).exec(function (err, wishes) {
+                    if (err) { return res.status(500).send({ success: false, message: err}); }
+                    res.json({success: true, wishes: wishes});
+                });
+                return;
+            }
+
+            //returns wishes newer than wishId
+            if (req.query.wishId) {
+                wishId = new ObjectId(req.query.wishId);
+                Wish.find({_id: {$gt: wishId}}).sort({_id:-1}).skip(skip).limit(count).exec(function(err, wishes) {
                     if (err) { return res.status(500).send({ success: false, message: err}); }
                     res.json({success: true, wishes: wishes});
                 });
