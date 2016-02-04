@@ -11,6 +11,7 @@ var UserSchema   = new Schema({
     username: { type: String, required: true, index: { unique: true }},
     password: { type: String, required: true, select: false },
     userAgent: { type: Object, select: true, default: {device_type: "web"} },
+    createdDate : { type: Date, select: true, default: Date.now },
     isActive: { type: Boolean, required: true, select: true, default: true }
 });
 
