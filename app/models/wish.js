@@ -6,6 +6,7 @@ var Schema       = mongoose.Schema,
 var WishSchema = new Schema({
 	    content: { type: String, required: true, index: true },
 	    createdDate: { type: String, required: true, select: true},
+        timestamp: { type: Number, required: true, select: true, default: Math.round(+new Date()/1000) },
         userId: { type: ObjectId, required: true, select: true },
         username: { type: String, required: true, select: true },
         likes: { type: Number, required: true, select: true, default: 0 },
