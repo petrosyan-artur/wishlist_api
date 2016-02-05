@@ -158,17 +158,14 @@ var apiPrivate = function(app, express) {
     apiRouter.route('/wishes')
     //get users' wishes
         .get(function(req, res) {
-            //search in adminpage case
-            if (req.query.userId && req.decoded.username == "wishlistAdmin") {
-                var userId = new ObjectId(req.query.userId);
-                Wish.find({ userId: userId}).sort({_id:-1}).exec(function (err, wishes) {
-                    if (wishes.length == 0) {
-                        res.json({success: false, wishes: 0});
-                    } else {
-                        res.json({success: true, wishes: wishes});
-                    }
-                });
-                return;
+
+            //
+            var skip = 0;
+            var count = 12;
+            var next = 4;
+            if (req.query.limit && req.query.limit != 0) {
+                skip = req.query.limit;
+                count = next;
             }
 
             //checking new wishes
@@ -198,14 +195,6 @@ var apiPrivate = function(app, express) {
                 return;
             }
 
-            //
-            var skip = 0;
-            var count = 12;
-            var next = 4;
-            if (req.query.limit && req.query.limit != 0) {
-                skip = req.query.limit;
-                count = next;
-            }
             //wish search case
             if (req.query.content) {
                 Wish.find({ content: new RegExp(req.query.content, 'i'), isActive: true}).sort({_id:-1}).skip(skip).limit(count).exec(function (err, wishes) {
@@ -219,7 +208,7 @@ var apiPrivate = function(app, express) {
             }
 
             //get wishes liked by user
-            if (req.query.userId) {
+            if (req.query.userId && req.query.liked && req.query.liked == 1) {
                 Rate.find({userId: req.query.userId}).exec(function(err, rates) {
                     if (err) { return res.status(500).send({ success: false, message: err}); }
                     if (rates.length == 0) {
@@ -234,6 +223,16 @@ var apiPrivate = function(app, express) {
                             res.json({success: true, wishes: wishes});
                         });
                     }
+                });
+                return;
+            }
+
+            //returns user's own wishes
+            if (req.query.userId) {
+                var userId = new ObjectId(req.query.userId);
+                if (req.decoded.username == "wishlistAdmin") {count = 1000;}
+                Wish.find({ userId: userId}).sort({_id:-1}).skip(skip).limit(count).exec(function (err, wishes) {
+                    res.json({success: true, wishes: wishes});
                 });
                 return;
             }
