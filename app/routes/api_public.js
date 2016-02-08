@@ -80,6 +80,7 @@ module.exports = function(app, express) {
                     res.json({
                         success: true,
                         message: 'Enjoy your token!',
+                        userId: user._id,
                         token: token
                     });
                 }
@@ -119,6 +120,7 @@ module.exports = function(app, express) {
                 res.json({
                     success: true,
                     message: 'User created! Enjoy your token!',
+                    userId: user._id,
                     token: token
                 });
             });
