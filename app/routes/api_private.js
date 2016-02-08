@@ -260,6 +260,18 @@ var apiPrivate = function(app, express) {
             });
         });
 
+    apiRouter.route('/wishes/ids/:ids')
+    //return wishes by
+        .get(function(req, res) {
+            var ids = req.params.ids;
+            ids = ids.split(',');
+            //res.json({success: true, ids: ids});return false;
+            Wish.find({_id : {$in : ids}}).sort({_id: -1}).exec(function(err, wishes) {
+                if (err) { return res.status(500).send({ success: false, message: err}); }
+                res.json({success: true, wishes: wishes});
+            });
+        });
+
     // on routes that end in /users
     // ----------------------------------------------------
     apiRouter.route('/users')

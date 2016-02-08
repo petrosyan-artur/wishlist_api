@@ -7,7 +7,7 @@ var WishSchema = new Schema({
 	    content: { type: String, required: true, index: true },
 	    createdDate: { type: String, required: true, select: true},
         timestamp: { type: Number, required: true, select: true, default: Math.round(+new Date()/1000) },
-        userId: { type: ObjectId, required: true, select: true },
+        userId: { type: ObjectId, required: true, select: true, index: true },
         username: { type: String, required: true, select: true },
         likes: { type: Number, required: true, select: true, default: 0 },
         decoration: {type: Object, required: true, select: true },
