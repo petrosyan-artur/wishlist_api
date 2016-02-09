@@ -220,7 +220,10 @@ var apiPrivate = function(app, express) {
                         });
                         Wish.find({_id:{$in:idList}}).sort({_id:-1}).skip(skip).limit(count).exec(function(err, wishes) {
                             if (err) { return res.status(500).send({ success: false, message: err}); }
-                            res.json({success: true, wishes: wishes});
+                            rm.checkLiked(wishes, req.query.userId, function(err, data){
+                                if (err) { return res.status(500).send({ success: false, message: err}); }
+                                res.send(data);
+                            });
                         });
                     }
                 });
@@ -232,7 +235,10 @@ var apiPrivate = function(app, express) {
                 var userId = new ObjectId(req.query.userId);
                 if (req.decoded.username == "wishlistAdmin") {count = 1000;}
                 Wish.find({ userId: userId}).sort({_id:-1}).skip(skip).limit(count).exec(function (err, wishes) {
-                    res.json({success: true, wishes: wishes});
+                    rm.checkLiked(wishes, req.query.userId, function(err, data){
+                        if (err) { return res.status(500).send({ success: false, message: err}); }
+                        res.send(data);
+                    });
                 });
                 return;
             }
