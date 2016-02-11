@@ -63,4 +63,4 @@ app.get('*', function(req, res) {
 // START THE SERVER
 // ====================================
 app.listen(config.port);
-console.log('Magic happens on port ' + config.port);
+console.log('Node server started on port ' + config.port);
