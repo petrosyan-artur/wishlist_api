@@ -414,13 +414,20 @@ var apiPrivate = function(app, express) {
             rate.wishId = req.body.wishId;
             rate.userId = req.body.userId;
 
-            rate.save(function(err, result) {
+            Rate.findOne({userId: rate.userId, wishId: rate.wishId}).exec(function(err, rate) {
                 if (err) { return res.status(500).send({ success: false, message: err}); }
-                // return a message
-                Wish.update({_id: req.body.wishId}, {$inc: { likes: 1 }}).exec(function(err, wish) {
-                    if (err) { return res.status(500).send({success: false, message: err}); }
-                    res.json({ success: true, message: 'Rated!', data: result });
-                });
+                if (!rate) {
+                    res.json({success: false, message: "You have already liked this wish!"});
+                } else {
+                    rate.save(function(err, result) {
+                        if (err) { return res.status(500).send({ success: false, message: err}); }
+                        // return a message
+                        Wish.update({_id: req.body.wishId}, {$inc: { likes: 1 }}).exec(function(err, wish) {
+                            if (err) { return res.status(500).send({success: false, message: err}); }
+                            res.json({ success: true, message: 'Rated!', data: result });
+                        });
+                    });
+                }
             });
         })
 
