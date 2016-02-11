@@ -414,9 +414,9 @@ var apiPrivate = function(app, express) {
             rate.wishId = req.body.wishId;
             rate.userId = req.body.userId;
 
-            Rate.findOne({userId: rate.userId, wishId: rate.wishId}).exec(function(err, rate) {
+            Rate.findOne({userId: req.body.userId, wishId: req.body.wishId}).exec(function(err, foundRate) {
                 if (err) { return res.status(500).send({ success: false, message: err}); }
-                if (!rate) {
+                if (!foundRate) {
                     res.json({success: false, message: "You have already liked this wish!"});
                 } else {
                     rate.save(function(err, result) {
