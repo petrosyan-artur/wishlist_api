@@ -133,29 +133,12 @@ var apiPrivate = function(app, express) {
 
         .delete(function(req, res) {
             if (req.decoded.username == 'wishlistAdmin' || (req.query.username && req.query.username == req.decoded.username)) {
-                Wish.findById(req.params.wishId, function (err, wish) {
-                    if (err) {
-                        return res.status(500).send({success: false, message: err});
-                    }
-                    if (wish == null) {return res.send({ success: false, message: "Invalid wishId", wish: wish});}
-                    if (wish.likes != 0 && req.query.username) {
-                        return res.send({"success": false, "message": "The wish is liked and cannot be removed!"});
-                    } else {
-                        Wish.remove({
-                            _id: req.params.wishId
-                        }, function (err, wish) {
-                            if (err) {
-                                return res.status(500).send({success: false, message: err});
-                            }
-
-                            Rate.remove({wishId: req.params.wishId}, function (err, rate) {
-                                if (err) {
-                                    return res.status(500).send({success: false, message: err});
-                                }
-                                res.json({success: true, message: 'Successfully deleted!', wish: wish});
-                            });
-                        });
-                    }
+                Wish.remove({_id: req.params.wishId}, function (err, wish) {
+                    if (err) { return res.status(500).send({success: false, message: err}); }
+                    Rate.remove({wishId: req.params.wishId},{"multi": true}, function (err, rate) {
+                        if (err) { return res.status(500).send({success: false, message: err}); }
+                        res.json({success: true, message: 'Successfully deleted!', wish: wish});
+                    });
                 });
             } else {
                 res.json({success: false, message: 'Private request roles required!'});
