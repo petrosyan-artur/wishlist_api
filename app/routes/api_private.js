@@ -24,7 +24,7 @@ var apiPrivate = function(app, express) {
             ' '+ ('0' + d.getHours()).slice(-2) + ":" + ('0' + d.getMinutes()).slice(-2) + ":" + ('0' + d.getSeconds()).slice(-2) ;
         var ip = req.headers['x-forwarded-for'];
 
-        console.log(date + ' - ' + ip);
+        console.log('API:Private ' + date + ' - ' + ip);
 
         // check user-agent
         var userAgent = req.headers['my-user-agent'];

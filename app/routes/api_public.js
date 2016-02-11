@@ -19,7 +19,12 @@ module.exports = function(app, express) {
     // route middleware to get user-agent
     apiRouter.use(function(req, res, next) {
         // do logging
-        console.log('Somebody just came to our app!');
+        var d = new Date();
+        var date = d.getFullYear()+'-'+('0' + (d.getMonth() + 1)).slice(-2)+'-'+('0' + d.getDate()).slice(-2) +
+            ' '+ ('0' + d.getHours()).slice(-2) + ":" + ('0' + d.getMinutes()).slice(-2) + ":" + ('0' + d.getSeconds()).slice(-2) ;
+        var ip = req.headers['x-forwarded-for'];
+
+        console.log('API:Public ' + date + ' - ' + ip);
 
         // check user-agent
         var userAgent = req.headers['my-user-agent'];
@@ -28,6 +33,7 @@ module.exports = function(app, express) {
         } else {
             req.userAgent = {};
         }
+        console.log('Device: ' + req.userAgent.device_type + ' Version: ' + req.userAgent.app_version);
         next();
     });
 
