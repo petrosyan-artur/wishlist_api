@@ -134,9 +134,9 @@ var apiPrivate = function(app, express) {
         .delete(function(req, res) {
             if (req.decoded.username == 'wishlistAdmin' || (req.query.username && req.query.username == req.decoded.username)) {
                 Wish.remove({_id: req.params.wishId}, function (err, wish) {
-                    if (err) { return res.send({success: false, message: err}); }
+                    if (err) { return res.status(500).send({success: false, message: err}); }
                     Rate.remove({wishId: req.params.wishId}, function (err, rate) {
-                        if (err) { return res.send({success: false, message: err}); }
+                        if (err) { return res.status(500).send({success: false, message: err}); }
                         res.json({success: true, message: 'Successfully deleted!', wish: wish});
                     });
                 });
