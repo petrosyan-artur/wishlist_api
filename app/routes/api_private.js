@@ -17,11 +17,14 @@ var apiPrivate = function(app, express) {
 
     // route middleware to verify a token
     apiRouter.use(function(req, res, next) {
-        // do logging
-        console.log('Somebody just came to our private app!');
 
-        // check header or url parameters or post parameters for token
-        var token = req.body.token || req.param('token') || req.headers['x-access-token'];
+        // do logging
+        var d = new Date();
+        var date = d.getFullYear()+'-'+('0' + (d.getMonth() + 1)).slice(-2)+'-'+('0' + d.getDate()).slice(-2) +
+            ' '+ ('0' + d.getHours()).slice(-2) + ":" + ('0' + d.getMinutes()).slice(-2) + ":" + ('0' + d.getSeconds()).slice(-2) ;
+        var ip = req.headers['x-forwarded-for'];
+
+        console.log(date + ' - ' + ip);
 
         // check user-agent
         var userAgent = req.headers['my-user-agent'];
@@ -30,6 +33,9 @@ var apiPrivate = function(app, express) {
         } else {
             req.userAgent = {};
         }
+
+        // check header or url parameters or post parameters for token
+        var token = req.body.token || req.param('token') || req.headers['x-access-token'];
 
         // decode token
         if (token) {
@@ -45,6 +51,7 @@ var apiPrivate = function(app, express) {
                 } else {
                     // if everything is good, save to request for use in other routes
                     req.decoded = decoded;
+                    console.log('Username: '+decoded.username + ' Device: ' + req.userAgent.device_type + ' Version: ' + req.userAgent.app_version);
                     next();
                 }
             });
