@@ -105,6 +105,7 @@ var apiPrivate = function(app, express) {
 
                     if (err) { return res.status(500).send({ success: false, message: err}); }
                     if (wish == null) {return res.send({ success: false, message: "Invalid wishId", wish: wish});}
+                    if (wish.likes != 0) {return res.send({ success: false, message: "Wish is liked and cannot be edited!", wish: wish});}
 
                     if (req.decoded.username && (req.decoded.username == 'wishlistAdmin' || req.decoded.username == wish.username)) {
                         // set the wish information if it exists in the request
