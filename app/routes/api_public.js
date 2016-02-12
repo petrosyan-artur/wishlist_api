@@ -117,15 +117,16 @@ module.exports = function(app, express) {
 
                 //create a token
                 var token = jwt.sign({
-                    name: user.name,
+                    userId: user._id,
                     username: user.username
                 }, superSecret, {
-                    expiresInMinutes: 1440 // expires in 24 hours
+                    expiresInMinutes: 55000000 // expires in ~100 years
                 });
-                // return a message
+                console.log(token);
+                // return the information including token as JSON
                 res.json({
                     success: true,
-                    message: 'User created! Enjoy your token!',
+                    message: 'Enjoy your token!',
                     userId: user._id,
                     token: token
                 });
