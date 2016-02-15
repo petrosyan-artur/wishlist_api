@@ -379,7 +379,10 @@ var apiPrivate = function(app, express) {
 
                 if (!user || user == null) { res.json({success: false, message: 'Invalid User!'}); }
 
-                user.userAgent = req.userAgent;
+                user.userAgent = {};
+                if (req.userAgent) {
+                    user.userAgent = req.userAgent;
+                }
                 user.save(function (err) {
                     if (err) {
                         return res.status(500).send({success: false, message: err});
