@@ -133,7 +133,7 @@ var apiPrivate = function(app, express) {
     apiRouter.route('/wishes/:wishId')
 
         .delete(function(req, res) {
-            if (req.decoded.username == 'wishlistAdmin' || (req.query.username && req.query.username == req.decoded.username)) {
+            if (req.decoded.username == 'wishlistAdmin' || (req.query.username && req.query.username == req.decoded.username) || (req.query.userId && req.query.userId == req.decoded.userId)) {
                 Wish.remove({_id: req.params.wishId}, function (err, wish) {
                     if (err) { return res.status(500).send({success: false, message: err}); }
                     Rate.remove({wishId: req.params.wishId}, function (err, rate) {
