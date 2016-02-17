@@ -221,12 +221,13 @@ var apiPrivate = function(app, express) {
                 return;
             }
 
-            //returns user's own wishes
+            //returns user's own wishes (with my likes)
             if (req.query.userId) {
                 var userId = new ObjectId(req.query.userId);
-                if (req.decoded.username == "wishlistAdmin") {count = 1000;}
+                var myUserId = req.decoded.userId;
+                if (req.decoded.username == "wishlistAdmin") {count = 1000; myUserId = req.query.userId;}
                 Wish.find({ userId: userId}).sort({_id:-1}).skip(skip).limit(count).exec(function (err, wishes) {
-                    rm.checkLiked(wishes, req.query.userId, function(err, data){
+                    rm.checkLiked(wishes, myUserId, function(err, data){
                         if (err) { return res.status(500).send({ success: false, message: err}); }
                         res.send(data);
                     });
