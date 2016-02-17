@@ -189,6 +189,16 @@ module.exports = function(app, express) {
                 return;
             }
 
+            //returns user's own wishes
+            if (req.query.userId) {
+                var userId = new ObjectId(req.query.userId);
+                Wish.find({ userId: userId}).sort({_id:-1}).skip(skip).limit(count).exec(function (err, wishes) {
+                    if (err) { return res.status(500).send({ success: false, message: err}); }
+                    res.json({success: true, wishes: wishes});
+                });
+                return;
+            }
+
             //returns wishes newer than wishId
             if (req.query.wishId) {
                 wishId = new ObjectId(req.query.wishId);
