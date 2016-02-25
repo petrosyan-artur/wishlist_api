@@ -182,7 +182,7 @@ module.exports = function(app, express) {
             }
             //wish search case
             if (req.query.content) {
-                Wish.find({ content: new RegExp(req.query.content, 'i'), isActive: true}).sort({_id:-1}).skip(skip).limit(count).exec(function (err, wishes) {
+                Wish.find({isActive: true, $text : { $search : req.query.content }}, { score: { $meta: "textScore" }, content: 1}).sort({ score: { $meta: "textScore" }}).skip(skip).limit(count).exec(function (err, wishes) {
                     if (err) { return res.status(500).send({ success: false, message: err}); }
                     res.json({success: true, wishes: wishes});
                 });

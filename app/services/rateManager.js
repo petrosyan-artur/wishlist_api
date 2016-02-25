@@ -28,7 +28,7 @@ function getRates(wishId) {
     });
 }
 
-exports.checkLiked = function(wishes, userId, callback) {
+exports.checkLiked = function(wishes, userId, prop, callback) {
 
     wishes = JSON.parse(JSON.stringify(wishes));
     var data = [];
@@ -53,7 +53,7 @@ exports.checkLiked = function(wishes, userId, callback) {
         if (err) return callback(err, null);
         var response = {
             success: true,
-            wishes: gm.sortBy(data, {prop: "_id", desc: true})
+            wishes: gm.sortBy(data, {prop: prop, desc: true})
         };
         return callback(null, response);
     });

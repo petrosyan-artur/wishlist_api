@@ -188,9 +188,9 @@ var apiPrivate = function(app, express) {
 
             //wish search case
             if (req.query.content) {
-                Wish.find({ content: new RegExp(req.query.content, 'i'), isActive: true}).sort({_id:-1}).skip(skip).limit(count).exec(function (err, wishes) {
+                Wish.find({isActive: true, $text : { $search : req.query.content }}, { score: { $meta: "textScore" }, content: 1}).sort({ score: { $meta: "textScore" }}).skip(skip).limit(count).exec(function (err, wishes) {
                     if (err) { return res.status(500).send({ success: false, message: err}); }
-                    rm.checkLiked(wishes, req.decoded.userId, function(err, data){
+                    rm.checkLiked(wishes, req.decoded.userId, 'score', function(err, data){
                         if (err) { return res.status(500).send({ success: false, message: err}); }
                         res.send(data);
                     });
@@ -211,7 +211,7 @@ var apiPrivate = function(app, express) {
                         });
                         Wish.find({_id:{$in:idList}}).sort({_id:-1}).skip(skip).limit(count).exec(function(err, wishes) {
                             if (err) { return res.status(500).send({ success: false, message: err}); }
-                            rm.checkLiked(wishes, req.query.userId, function(err, data){
+                            rm.checkLiked(wishes, req.query.userId, '_id', function(err, data){
                                 if (err) { return res.status(500).send({ success: false, message: err}); }
                                 res.send(data);
                             });
@@ -227,7 +227,7 @@ var apiPrivate = function(app, express) {
                 var myUserId = req.decoded.userId;
                 if (req.decoded.username == "wishlistAdmin") {count = 1000; myUserId = req.query.userId;}
                 Wish.find({ userId: userId}).sort({_id:-1}).skip(skip).limit(count).exec(function (err, wishes) {
-                    rm.checkLiked(wishes, myUserId, function(err, data){
+                    rm.checkLiked(wishes, myUserId, '_id', function(err, data){
                         if (err) { return res.status(500).send({ success: false, message: err}); }
                         res.send(data);
                     });
@@ -240,7 +240,7 @@ var apiPrivate = function(app, express) {
                 wishId = new ObjectId(req.query.wishId);
                 Wish.find({_id: {$gt: wishId}}).sort({_id:-1}).skip(skip).limit(count).exec(function(err, wishes) {
                     if (err) { return res.status(500).send({ success: false, message: err}); }
-                    rm.checkLiked(wishes, req.decoded.userId, function(err, data){
+                    rm.checkLiked(wishes, req.decoded.userId, '_id', function(err, data){
                         if (err) { return res.status(500).send({ success: false, message: err}); }
                         res.send(data);
                     });
@@ -251,7 +251,7 @@ var apiPrivate = function(app, express) {
             //returns 'count' number of wishes and skips 'skip'
             Wish.find({isActive: true}).sort({_id:-1}).skip(skip).limit(count).exec(function(err, wishes) {
                 if (err) { return res.status(500).send({ success: false, message: err}); }
-                rm.checkLiked(wishes, req.decoded.userId, function(err, data){
+                rm.checkLiked(wishes, req.decoded.userId, '_id', function(err, data){
                     if (err) { return res.status(500).send({ success: false, message: err}); }
                     res.send(data);
                 });
