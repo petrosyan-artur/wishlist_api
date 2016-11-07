@@ -148,6 +148,14 @@ module.exports = function(app, express) {
 			});
 		});
 
+
+
+    apiRouter.route('/wishes/ppp').get(function(req, res) {
+        res.json({'a':'b'});
+    });
+
+
+
 	// on routes that end in /users/:user_id
 	// ----------------------------------------------------
 	apiRouter.route('/wishes/:wish_id')
