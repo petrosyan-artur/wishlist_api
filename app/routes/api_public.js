@@ -256,12 +256,8 @@ module.exports = function(app, express) {
 
                 for( i in wishes ) {
                     var tmp = JSON.parse(JSON.stringify(wishes[i]));
-                    //var tmp = {};
-                    tmp['zzzz'] = 1;
                     tmp.color = wishes[i].decoration.color;
                     tmp.image = wishes[i].decoration.image;
-                    res.json({success: true, a: 'l', wishes: tmp, z:wishes[i]});
-                    return;
                     finalFishes.push(tmp);
                 }
 
