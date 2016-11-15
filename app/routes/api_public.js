@@ -147,8 +147,6 @@ module.exports = function(app, express) {
 		.get(function(req, res) {
 
 
-            res.json({success: true});
-            return;
 
             //checking new wishes
             if (req.query.wishId && req.query.count && req.query.count == 1) {
