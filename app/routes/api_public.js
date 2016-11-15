@@ -255,7 +255,7 @@ module.exports = function(app, express) {
 
 
                 for( i in wishes ) {
-                    var tmp = JSON.parse(JSON.stringify(ishes[i]));
+                    var tmp = JSON.parse(JSON.stringify(wishes[i]));
                     //var tmp = {};
                     tmp['zzzz'] = 1;
                     tmp.color = wishes[i].decoration.color;
