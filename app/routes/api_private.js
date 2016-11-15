@@ -73,8 +73,8 @@ var apiPrivate = function(app, express) {
         // create a wish (accessed at POST http://localhost:8080/wishes)
         .post(function(req, res) {
             var d = new Date();
-            //var date = d.getFullYear()+'-'+('0' + (d.getMonth() + 1)).slice(-2)+'-'+('0' + d.getDate()).slice(-2) +
-            //    ' '+ ('0' + d.getHours()).slice(-2) + ":" + ('0' + d.getMinutes()).slice(-2) + ":" + ('0' + d.getSeconds()).slice(-2) ;
+            var date = d.getFullYear()+'-'+('0' + (d.getMonth() + 1)).slice(-2)+'-'+('0' + d.getDate()).slice(-2) +
+                ' '+ ('0' + d.getHours()).slice(-2) + ":" + ('0' + d.getMinutes()).slice(-2) + ":" + ('0' + d.getSeconds()).slice(-2) ;
 
             var wish = new Wish();		// create a new instance of the Wish model
             wish.content = req.body.content;  // set the wish content (comes from the request)
