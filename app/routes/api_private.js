@@ -79,13 +79,13 @@ var apiPrivate = function(app, express) {
             var wish = new Wish();		// create a new instance of the Wish model
             wish.content = req.body.content;  // set the wish content (comes from the request)
             //wish.createdDate = date;  // set the wish created date (comes from the request)
-            //wish.createdDate = date;  // set the wish created date (comes from the request)
+            wish.createdDate = date;  // set the wish created date (comes from the request)
             wish.timestamp = Math.round(d/1000);
             wish.userId = req.decoded.userId;  // set the wish owner id (is set in req.decoded)
-            //wish.username = req.decoded.username;  // set the wish owner name (is set in req.decoded)
-            //wish.decoration = {};
-            //wish.decoration.color = '197,202,233';
-            //wish.decoration.image = '';
+            wish.username = req.decoded.username;  // set the wish owner name (is set in req.decoded)
+            wish.decoration = {};
+            wish.decoration.color = '197,202,233';
+            wish.decoration.image = '';
             if (req.body.decoration) wish.decoration = req.body.decoration;
 
             wish.save(function(err, result) {
