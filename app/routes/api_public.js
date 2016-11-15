@@ -146,6 +146,10 @@ module.exports = function(app, express) {
 		// get all the wishes (accessed at GET http://localhost:8080/api/wishes)
 		.get(function(req, res) {
 
+
+            res.json({success: true});
+            return;
+
             //checking new wishes
             if (req.query.wishId && req.query.count && req.query.count == 1) {
                 var wishId = new ObjectId(req.query.wishId);
