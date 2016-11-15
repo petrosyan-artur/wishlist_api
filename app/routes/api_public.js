@@ -212,6 +212,16 @@ module.exports = function(app, express) {
             //returns 'count' number of wishes and skips 'skip'
             Wish.find({isActive: true}).sort({_id:-1}).skip(skip).limit(count).exec(function(err, wishes) {
                 if (err) { return res.status(500).send({ success: false, message: err}); }
+
+                var finalFishes = [];
+
+
+                for( i in wishes ) {
+                    var tmp = wishes[i];
+                    tmp.color = tmp.decoration.color;
+                    tmp.image = tmp.decoration.image;
+                }
+
                 res.json({success: true, wishes: wishes});
 			});
 		});
