@@ -219,7 +219,7 @@ module.exports = function(app, express) {
                         finalFishes.push(tmp);
                     }
 
-                    res.json({success: true, wishes: finalFishes});
+                    res.json({success: true, a: 'q', wishes: finalFishes});
 
                 });
                 return;
@@ -242,7 +242,7 @@ module.exports = function(app, express) {
                         finalFishes.push(tmp);
                     }
 
-                    res.json({success: true, wishes: finalFishes});
+                    res.json({success: true, a: 'z', wishes: finalFishes});
                 });
                 return;
             }
@@ -261,7 +261,7 @@ module.exports = function(app, express) {
                     finalFishes.push(tmp);
                 }
 
-                res.json({success: true, wishes: finalFishes});
+                res.json({success: true, a: 'l', wishes: finalFishes});
 			});
 		});
 
