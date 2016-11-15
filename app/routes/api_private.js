@@ -73,18 +73,19 @@ var apiPrivate = function(app, express) {
         // create a wish (accessed at POST http://localhost:8080/wishes)
         .post(function(req, res) {
             var d = new Date();
-            var date = d.getFullYear()+'-'+('0' + (d.getMonth() + 1)).slice(-2)+'-'+('0' + d.getDate()).slice(-2) +
-                ' '+ ('0' + d.getHours()).slice(-2) + ":" + ('0' + d.getMinutes()).slice(-2) + ":" + ('0' + d.getSeconds()).slice(-2) ;
+            //var date = d.getFullYear()+'-'+('0' + (d.getMonth() + 1)).slice(-2)+'-'+('0' + d.getDate()).slice(-2) +
+            //    ' '+ ('0' + d.getHours()).slice(-2) + ":" + ('0' + d.getMinutes()).slice(-2) + ":" + ('0' + d.getSeconds()).slice(-2) ;
 
             var wish = new Wish();		// create a new instance of the Wish model
             wish.content = req.body.content;  // set the wish content (comes from the request)
-            wish.createdDate = date;  // set the wish created date (comes from the request)
+            //wish.createdDate = date;  // set the wish created date (comes from the request)
+            //wish.createdDate = date;  // set the wish created date (comes from the request)
             wish.timestamp = Math.round(d/1000);
             wish.userId = req.decoded.userId;  // set the wish owner id (is set in req.decoded)
-            wish.username = req.decoded.username;  // set the wish owner name (is set in req.decoded)
-            wish.decoration = {};
-            wish.decoration.color = '197,202,233';
-            wish.decoration.image = '';
+            //wish.username = req.decoded.username;  // set the wish owner name (is set in req.decoded)
+            //wish.decoration = {};
+            //wish.decoration.color = '197,202,233';
+            //wish.decoration.image = '';
             if (req.body.decoration) wish.decoration = req.body.decoration;
 
             wish.save(function(err, result) {
@@ -253,6 +254,17 @@ var apiPrivate = function(app, express) {
                 if (err) { return res.status(500).send({ success: false, message: err}); }
                 rm.checkLiked(wishes, req.decoded.userId, '_id', function(err, data){
                     if (err) { return res.status(500).send({ success: false, message: err}); }
+
+                    var finalFishes = [];
+
+
+                    for( i in wishes ) {
+                        var tmp = wishes[i];
+                        tmp.color = tmp.decoration.color;
+                        tmp.image = tmp.decoration.image;
+                        finalFishes.push(finalFishes);
+                    }
+
                     res.send(data);
                 });
             });
