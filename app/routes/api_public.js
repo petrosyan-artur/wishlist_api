@@ -258,6 +258,8 @@ module.exports = function(app, express) {
                     var tmp = wishes[i];
                     tmp.color = tmp.decoration.color;
                     tmp.image = tmp.decoration.image;
+                    res.json({success: true, a: 'l', wishes: tmp});
+                    return;
                     finalFishes.push(tmp);
                 }
 
