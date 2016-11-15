@@ -205,7 +205,20 @@ module.exports = function(app, express) {
                 var userId = new ObjectId(req.query.userId);
                 Wish.find({ userId: userId}).sort({_id:-1}).skip(skip).limit(count).exec(function (err, wishes) {
                     if (err) { return res.status(500).send({ success: false, message: err}); }
-                    res.json({success: true, wishes: wishes});
+
+
+                    var finalFishes = [];
+
+
+                    for( i in wishes ) {
+                        var tmp = wishes[i];
+                        tmp.color = tmp.decoration.color;
+                        tmp.image = tmp.decoration.image;
+                        finalFishes.push(tmp);
+                    }
+
+                    res.json({success: true, wishes: finalFishes});
+
                 });
                 return;
             }
