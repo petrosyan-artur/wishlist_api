@@ -220,9 +220,10 @@ module.exports = function(app, express) {
                     var tmp = wishes[i];
                     tmp.color = tmp.decoration.color;
                     tmp.image = tmp.decoration.image;
+                    finalFishes.push(tmp);
                 }
 
-                res.json({success: true, wishes: wishes});
+                res.json({success: true, wishes: finalFishes});
 			});
 		});
 
